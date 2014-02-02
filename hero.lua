@@ -1,4 +1,5 @@
 require('class')
+require('bullet')
 
 Hero = class:new()
 
@@ -18,6 +19,14 @@ end
 
 -- hero update actions
 
+function Hero:update(dt)
+  if love.keyboard.isDown("left") then
+    hero:moveLeft(dt)
+  elseif love.keyboard.isDown("right") then
+    hero:moveRight(dt)
+  end
+end
+
 function Hero:moveLeft(dt)
   self.x = self.x - self.speed * dt
 end
@@ -27,9 +36,7 @@ function Hero:moveRight(dt)
 end
 
 function Hero:shoot(dt)
-  local shot = {}
-  shot.x = self.x + self.width / 2
-  shot.y = self.y
+  local shot = Bullet:new(self.x + self.width / 2, self.y)
   table.insert(self.shots, shot)
 end
 

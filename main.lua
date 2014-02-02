@@ -27,9 +27,8 @@ function love.draw()
   hero:draw()
 
   -- hero shots
-  love.graphics.setColor(255, 255, 255, 255)
-  for i, v in ipairs(hero.shots) do
-    love.graphics.rectangle("fill", v.x, v.y, 2, 5)
+  for i, bullet in ipairs(hero.shots) do
+    bullet:draw()
   end
 
   -- enemies
@@ -39,22 +38,16 @@ function love.draw()
 end
 
 function love.update(dt)
-  if love.keyboard.isDown("left") then
-    hero:moveLeft(dt)
-  elseif love.keyboard.isDown("right") then
-    hero:moveRight(dt)
+  hero:update(dt)
+
+  for i, bullet in ipairs(hero.shots) do
+    bullet:update(dt)
   end
 
-  for i, v in ipairs(hero.shots) do
-    -- move shots up
-    v.y = v.y - dt * 100
-
-    if v.y < 0 then
-      table.remove(hero.shots, i)
-    end
-
-    for ii, vv in ipairs(enemies) do
-      if CheckCollision(v.x, v.y, 2, 5, vv.x, vv.y, vv.width, vv.height) then
+  for i, bullet in ipairs(hero.shots) do
+    for ii, enemy in ipairs(enemies) do
+      if CheckCollision(bullet.x, bullet.y, 2, 5,
+                        enemy.x, enemy.y, enemy.width, enemy.height) then
         table.remove(enemies, ii)
         table.remove(hero.shots, i)
       end
