@@ -3,7 +3,7 @@ require('hero')
 function love.load()
   image = love.graphics.newImage("assets/secretofmana.png")
 
-  hero = Hero.new(300, 400)
+  hero = Hero:new(300, 400)
 
   enemies = {}
 

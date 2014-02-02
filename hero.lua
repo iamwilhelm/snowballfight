@@ -1,18 +1,14 @@
-Hero = {}
-Hero.__index = Hero
+require('class')
 
-function Hero.new(x, y)
-  local hero = {}
-  setmetatable(hero, Hero)
+Hero = class:new()
 
-  hero.x = x
-  hero.y = y
-  hero.width = 30
-  hero.height = 30
-  hero.speed = 150
-  hero.shots = {}
-
-  return hero
+function Hero:init(x, y)
+  self.x = x
+  self.y = y
+  self.width = 30
+  self.height = 30
+  self.speed = 150
+  self.shots = {}
 end
 
 function Hero:draw()
