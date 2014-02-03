@@ -21,6 +21,7 @@ end
 function Bullet:init(x, y)
   self.x = x
   self.y = y
+  self.speed = 150
   self.hero = hero
 end
 
@@ -31,5 +32,5 @@ end
 
 function Bullet:update(dt)
   -- move the bullet on its trajectory
-  self.y = self.y - dt * 100
+  self.y = self.y - dt * self.speed
 end
