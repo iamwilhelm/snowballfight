@@ -38,13 +38,7 @@ function love.draw()
 end
 
 function love.update(dt)
-  hero:update(dt)
-
-  for i, bullet in ipairs(hero.shots) do
-    bullet:update(dt)
-  end
-  Bullet.removeAllOutOfView()
-
+  -- all physics
   for i, bullet in ipairs(hero.shots) do
     for ii, enemy in ipairs(enemies) do
       if CheckCollision(bullet.x, bullet.y, 2, 5,
@@ -53,9 +47,18 @@ function love.update(dt)
         table.remove(hero.shots, i)
       end
     end
-
   end
 
+  -- move the hero
+  hero:update(dt)
+
+  -- move the bullets
+  for i, bullet in ipairs(hero.shots) do
+    bullet:update(dt)
+  end
+  Bullet.removeAllOutOfView()
+
+  -- move the enemies
   for i, enemy in ipairs(enemies) do
     enemy:update(dt)
     if enemy.y > 465 then
