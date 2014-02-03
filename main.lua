@@ -43,6 +43,7 @@ function love.update(dt)
   for i, bullet in ipairs(hero.shots) do
     bullet:update(dt)
   end
+  Bullet.removeAllOutOfView()
 
   for i, bullet in ipairs(hero.shots) do
     for ii, enemy in ipairs(enemies) do

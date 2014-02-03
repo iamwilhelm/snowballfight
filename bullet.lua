@@ -3,9 +3,19 @@ require('class')
 Bullet = class:new()
 
 function Bullet.add(bullet)
+  table.insert(hero.shots, bullet)
 end
 
 function Bullet.remove(i)
+  table.remove(hero.shots, i)
+end
+
+function Bullet.removeAllOutOfView()
+  for i, bullet in ipairs(hero.shots) do
+    if bullet.y < 0 then
+      Bullet.remove(i)
+    end
+  end
 end
 
 function Bullet:init(x, y)
@@ -20,11 +30,6 @@ function Bullet:draw()
 end
 
 function Bullet:update(dt)
-  -- move the bullet up
+  -- move the bullet on its trajectory
   self.y = self.y - dt * 100
-
-  -- remove bullets outside the field of view
-  if self.y < 0 then
-    table.remove(hero.shots, i)
-  end
 end
