@@ -14,7 +14,10 @@ end
 
 function Hero:draw()
   love.graphics.setColor(255, 255, 0, 255)
-  love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+  love.graphics.rectangle("fill",
+    self.x - self.width / 2,
+    self.y - self.height / 2,
+    self.width, self.height)
 end
 
 -- hero update actions
@@ -36,7 +39,7 @@ function Hero:moveRight(dt)
 end
 
 function Hero:shoot(dt)
-  local shot = Bullet:new(self.x + self.width / 2, self.y)
+  local shot = Bullet:new(self.x, self.y)
   table.insert(self.shots, shot)
 end
 

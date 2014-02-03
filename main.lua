@@ -7,7 +7,7 @@ function love.load()
   hero = Hero:new(300, 400)
 
   enemies = {}
-  for i = 0, 7 do
+  for i = 0, 6 do
     local enemy = Enemy:new(i * 100 + 100, 100)
     table.insert(enemies, enemy)
   end

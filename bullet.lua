@@ -21,13 +21,18 @@ end
 function Bullet:init(x, y)
   self.x = x
   self.y = y
+  self.width = 5
+  self.height = 10
   self.speed = 150
   self.hero = hero
 end
 
 function Bullet:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.rectangle("fill", self.x, self.y, 2, 5)
+  love.graphics.rectangle("fill",
+    self.x - self.width / 2,
+    self.y - self.height / 2,
+    self.width, self.height)
 end
 
 function Bullet:update(dt)
