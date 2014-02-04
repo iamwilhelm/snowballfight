@@ -23,9 +23,13 @@ function love.draw()
   love.graphics.setColor(255, 255, 255, 255)
   -- love.graphics.draw(image)
 
+  -- sky
+  love.graphics.setColor(0, 200, 200, 255)
+  love.graphics.rectangle("fill", 0, 0, 800, 200)
+
   -- ground
   love.graphics.setColor(0, 200, 0, 255)
-  love.graphics.rectangle("fill", 0, 465, 800, 150)
+  love.graphics.rectangle("fill", 0, 200, 800, 400)
 
   -- the order to be drawn should be sorted according to z-order
 
