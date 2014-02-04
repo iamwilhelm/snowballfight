@@ -9,7 +9,6 @@ function Hero:init(x, y)
   self.width = 30
   self.height = 30
   self.speed = 150
-  self.shots = {}
 end
 
 function Hero:draw()
@@ -51,8 +50,9 @@ function Hero:moveDown(dt)
 end
 
 function Hero:shoot(dt)
-  local shot = Bullet:new(self.x, self.y)
-  table.insert(self.shots, shot)
+  local bullet = Bullet:new(self.x, self.y - self.height)
+  table.insert(projectiles, bullet)
+  table.insert(world, shot)
 end
 
 

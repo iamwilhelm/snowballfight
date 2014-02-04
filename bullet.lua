@@ -3,16 +3,16 @@ require('class')
 Bullet = class:new()
 
 function Bullet.add(bullet)
-  table.insert(hero.shots, bullet)
+  table.insert(projectiles, bullet)
 end
 
 function Bullet.remove(i)
-  table.remove(hero.shots, i)
+  table.remove(projectiles, i)
 end
 
 -- should know something about the field of view or bullet range from point of origin
 function Bullet.removeAllOutOfView()
-  for i, bullet in ipairs(hero.shots) do
+  for i, bullet in ipairs(projectiles) do
     if bullet.y < 0 then
       Bullet.remove(i)
     end

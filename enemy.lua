@@ -7,6 +7,7 @@ function Enemy:init(x, y)
   self.height = 20
   self.x = x
   self.y = self.height + y
+  self.speed = 20
 end
 
 function Enemy:draw()
@@ -18,7 +19,7 @@ function Enemy:draw()
 end
 
 function Enemy:update(dt)
-  self.y = self.y + dt
+  self.y = self.y + 20 * dt
 end
 
 

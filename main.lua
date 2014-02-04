@@ -3,14 +3,17 @@ require('enemy')
 
 
 function love.load()
+  world = {}
+  projectiles = {}
+
   image = love.graphics.newImage("assets/secretofmana.png")
 
   hero = Hero:new(300, 400)
+  table.insert(world, hero)
 
-  enemies = {}
   for i = 0, 6 do
     local enemy = Enemy:new(i * 100 + 100, 100)
-    table.insert(enemies, enemy)
+    table.insert(world, enemy)
   end
 
 end
@@ -26,56 +29,53 @@ function love.draw()
 
   -- the order to be drawn should be sorted according to z-order
 
-  -- enemies
-  for i, enemy in ipairs(enemies) do
-    enemy:draw()
+  -- entities
+  for i, entity in ipairs(world) do
+    entity:draw()
   end
 
-  -- hero shots
-  for i, bullet in ipairs(hero.shots) do
-    bullet:draw()
+  -- projectiles
+  for i, projectile in ipairs(projectiles) do
+    projectile:draw()
   end
-
-  -- hero
-  hero:draw()
 end
 
 function love.update(dt)
   Bullet.removeAllOutOfView()
 
+  --------------- physics ----------------
+
   -- all physics
-  for i, bullet in ipairs(hero.shots) do
-    for j, enemy in ipairs(enemies) do
+  for i, bullet in ipairs(projectiles) do
+    for j, entity in ipairs(world) do
       if checkCollision(bullet.x, bullet.y, bullet.width, bullet.height,
-                        enemy.x, enemy.y, enemy.width, enemy.height) then
-        table.remove(enemies, j)
-        table.remove(hero.shots, i)
+                        entity.x, entity.y, entity.width, entity.height) then
+        table.remove(world, j)
+        table.remove(projectiles, i)
       end
 
     end
   end
 
   -- check for collisions between hero and enemies
-  for i, enemy in ipairs(enemies) do
+  for i, entity in ipairs(world) do
     checkCollision(hero.x, hero.y, hero.width, hero.height,
-                  enemy.x, enemy.y, enemy.width, enemy.height)
+                   entity.x, entity.y, entity.width, entity.height)
   end
 
-  -- move the hero
-  hero:update(dt)
+  -------------- move entities -------------
 
   -- move the bullets
-  for i, bullet in ipairs(hero.shots) do
+  for i, bullet in ipairs(projectiles) do
     bullet:update(dt)
   end
 
-  -- move the enemies
-  for i, enemy in ipairs(enemies) do
-    enemy:update(dt)
-    if enemy.y > 465 then
-      love.graphics.print('You lose!')
-    end
+  -- move all entities in the world
+  for i, entity in ipairs(world) do
+    entity:update(dt)
   end
+
+  -- check for win or lose
 end
 
 function love.keyreleased(key)
