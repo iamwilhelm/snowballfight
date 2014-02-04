@@ -24,22 +24,25 @@ function love.draw()
   love.graphics.setColor(0, 200, 0, 255)
   love.graphics.rectangle("fill", 0, 465, 800, 150)
 
-  -- hero
-  hero:draw()
-
-  -- hero shots
-  for i, bullet in ipairs(hero.shots) do
-    bullet:draw()
-  end
+  -- the order to be drawn should be sorted according to z-order
 
   -- enemies
   for i, enemy in ipairs(enemies) do
     enemy:draw()
   end
 
+  -- hero shots
+  for i, bullet in ipairs(hero.shots) do
+    bullet:draw()
+  end
+
+  -- hero
+  hero:draw()
 end
 
 function love.update(dt)
+  Bullet.removeAllOutOfView()
+
   -- all physics
   for i, bullet in ipairs(hero.shots) do
     for j, enemy in ipairs(enemies) do
@@ -65,7 +68,6 @@ function love.update(dt)
   for i, bullet in ipairs(hero.shots) do
     bullet:update(dt)
   end
-  Bullet.removeAllOutOfView()
 
   -- move the enemies
   for i, enemy in ipairs(enemies) do
