@@ -27,6 +27,10 @@ function Hero:update(dt)
     hero:moveLeft(dt)
   elseif love.keyboard.isDown("right") then
     hero:moveRight(dt)
+  elseif love.keyboard.isDown("up") then
+    hero:moveUp(dt)
+  elseif love.keyboard.isDown("down") then
+    hero:moveDown(dt)
   end
 end
 
@@ -36,6 +40,14 @@ end
 
 function Hero:moveRight(dt)
   self.x = self.x + self.speed * dt
+end
+
+function Hero:moveUp(dt)
+  self.y = self.y - self.speed * dt
+end
+
+function Hero:moveDown(dt)
+  self.y = self.y + self.speed * dt
 end
 
 function Hero:shoot(dt)
