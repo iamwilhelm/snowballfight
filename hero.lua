@@ -24,11 +24,14 @@ end
 function Hero:update(dt)
   if love.keyboard.isDown("left") then
     hero:moveLeft(dt)
-  elseif love.keyboard.isDown("right") then
+  end
+  if love.keyboard.isDown("right") then
     hero:moveRight(dt)
-  elseif love.keyboard.isDown("up") then
+  end
+  if love.keyboard.isDown("up") then
     hero:moveUp(dt)
-  elseif love.keyboard.isDown("down") then
+  end
+  if love.keyboard.isDown("down") then
     hero:moveDown(dt)
   end
 end
