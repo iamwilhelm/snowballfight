@@ -32,6 +32,9 @@ function love.draw()
   love.graphics.rectangle("fill", 0, 200, 800, 400)
 
   -- the order to be drawn should be sorted according to z-order
+  table.sort(world, function(a, b)
+    return a:bottom() < b:bottom()
+  end)
 
   -- entities
   for i, entity in ipairs(world) do

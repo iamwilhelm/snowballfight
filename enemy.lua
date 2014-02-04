@@ -10,6 +10,10 @@ function Enemy:init(x, y)
   self.speed = 20
 end
 
+function Enemy:bottom()
+  return self.y + self.height / 2
+end
+
 function Enemy:draw()
   love.graphics.setColor(150, 100, 200, 255)
   love.graphics.rectangle("fill",

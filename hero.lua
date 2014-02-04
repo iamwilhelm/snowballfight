@@ -11,6 +11,10 @@ function Hero:init(x, y)
   self.speed = 150
 end
 
+function Hero:bottom()
+  return self.y + self.height / 2
+end
+
 function Hero:draw()
   love.graphics.setColor(255, 255, 0, 255)
   love.graphics.rectangle("fill",
