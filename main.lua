@@ -1,6 +1,7 @@
 require('hero')
 require('enemy')
 
+
 function love.load()
   image = love.graphics.newImage("assets/secretofmana.png")
 
@@ -17,7 +18,7 @@ end
 function love.draw()
   -- background
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(image)
+  -- love.graphics.draw(image)
 
   -- ground
   love.graphics.setColor(0, 200, 0, 255)
@@ -35,18 +36,26 @@ function love.draw()
   for i, enemy in ipairs(enemies) do
     enemy:draw()
   end
+
 end
 
 function love.update(dt)
   -- all physics
   for i, bullet in ipairs(hero.shots) do
-    for ii, enemy in ipairs(enemies) do
-      if CheckCollision(bullet.x, bullet.y, 2, 5,
+    for j, enemy in ipairs(enemies) do
+      if checkCollision(bullet.x, bullet.y, bullet.width, bullet.height,
                         enemy.x, enemy.y, enemy.width, enemy.height) then
-        table.remove(enemies, ii)
+        table.remove(enemies, j)
         table.remove(hero.shots, i)
       end
+
     end
+  end
+
+  -- check for collisions between hero and enemies
+  for i, enemy in ipairs(enemies) do
+    checkCollision(hero.x, hero.y, hero.width, hero.height,
+                  enemy.x, enemy.y, enemy.width, enemy.height)
   end
 
   -- move the hero
@@ -78,7 +87,22 @@ function love.quit()
   print("Thanks for playing!")
 end
 
-function CheckCollision(ax1,ay1,aw,ah, bx1,by1,bw,bh)
-  local ax2,ay2,bx2,by2 = ax1 + aw, ay1 + ah, bx1 + bw, by1 + bh
-  return ax1 > bx2 and ax2 > bx1 and ay1 > by2 and ay2 > by1
+function checkCollision(ax, ay, aw, ah, bx, by, bw, bh)
+  local aleft = ax - aw / 2
+  local aright = ax + aw / 2
+  local atop = ay - ah / 2
+  local abottom = ay + ah / 2
+
+  local bleft = bx - bw / 2
+  local bright = bx + bw / 2
+  local btop = by - bh / 2
+  local bbottom = by + bh / 2
+
+  return isOverlap(aleft, aright, bleft, bright)
+    and isOverlap(atop, abottom, btop, bbottom)
+end
+
+function isOverlap(amin, amax, bmin, bmax)
+  return (amax > bmin and amax < bmax) or (amin > bmin and amin < bmax)
+    or (bmin > amin and bmin < amax)
 end

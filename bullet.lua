@@ -10,6 +10,7 @@ function Bullet.remove(i)
   table.remove(hero.shots, i)
 end
 
+-- should know something about the field of view or bullet range from point of origin
 function Bullet.removeAllOutOfView()
   for i, bullet in ipairs(hero.shots) do
     if bullet.y < 0 then
