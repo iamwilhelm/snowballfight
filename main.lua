@@ -12,10 +12,12 @@ function love.load()
   table.insert(world, hero)
 
   for i = 0, 6 do
-    local enemy = Enemy:new(i * 100 + 100, 200)
+    local enemy = Enemy:new(i * 100 + 100, 300)
     table.insert(world, enemy)
   end
 
+  rand = love.math.newRandomGenerator()
+  rand:setSeed(os.time())
 end
 
 function love.draw()

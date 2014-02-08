@@ -5,13 +5,14 @@ Enemy = class:new()
 function Enemy:init(x, y)
   self.width = 40
   self.height = 20
-  self.x = x
-  self.y = self.height + y
-  self.speed = 20
-end
 
-function Enemy:bottom()
-  return self.y + self.height / 2
+  self.x = x
+  self.y = y
+
+  self.v_max = 20
+  self.vx = 0
+  self.vy = 0
+
 end
 
 function Enemy:draw()
@@ -23,7 +24,36 @@ function Enemy:draw()
 end
 
 function Enemy:update(dt)
-  self.y = self.y + 20 * dt
+  self:think(dt)
+  self:move(dt)
 end
+
+function Enemy:think(dt)
+  print(rand:random())
+  if rand:random() > 0.9 then
+    if rand:random() > 0.5 then
+      self.vx = self.v_max
+    else
+      self.vx = -self.v_max
+    end
+  end
+  if rand:random() > 0.9 then
+    if rand:random() > 0.5 then
+      self.vy = self.v_max
+    else
+      self.vy = -self.v_max
+    end
+  end
+end
+
+function Enemy:move(dt)
+  self.x = self.x + self.vx * dt
+  self.y = self.y + self.vy * dt
+end
+
+function Enemy:bottom()
+  return self.y + self.height / 2
+end
+
 
 
