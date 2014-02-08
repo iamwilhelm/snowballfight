@@ -12,7 +12,7 @@ function love.load()
   table.insert(world, hero)
 
   for i = 0, 6 do
-    local enemy = Enemy:new(i * 100 + 100, 100)
+    local enemy = Enemy:new(i * 100 + 100, 200)
     table.insert(world, enemy)
   end
 
@@ -58,7 +58,7 @@ function love.update(dt)
       if checkCollision(bullet.x, bullet.y, bullet.width, bullet.height,
                         entity.x, entity.y, entity.width, entity.height) then
         table.remove(world, j)
-        table.remove(projectiles, i)
+        Bullet.remove(i)
       end
 
     end
