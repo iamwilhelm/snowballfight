@@ -54,7 +54,7 @@ function love.update(dt)
 
   --------------- physics ----------------
 
-  -- all physics
+  -- check for collisions between bullets and enemies
   for i, bullet in ipairs(projectiles) do
     for j, entity in ipairs(world) do
       if checkCollision(bullet.x, bullet.y, bullet.width, bullet.height,
@@ -70,6 +70,13 @@ function love.update(dt)
   for i, entity in ipairs(world) do
     checkCollision(hero.x, hero.y, hero.width, hero.height,
                    entity.x, entity.y, entity.width, entity.height)
+  end
+
+  -- friction on the ground
+  for i, entity in ipairs(world) do
+    if entity.drag then
+      entity:drag(0.05, dt)
+    end
   end
 
   -------------- move entities -------------

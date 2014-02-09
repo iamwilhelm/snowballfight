@@ -21,11 +21,11 @@ function Hero:init(x, y)
   self.x = x
   self.y = y
 
-  self.v_max = 100
+  self.v_max = 150
   self.vx = 0
   self.vy = 0
 
-  self.a_max = 250
+  self.a_max = 300
   self.ax = 0
   self.ay = 0
 
@@ -52,13 +52,18 @@ function Hero:think(dt)
     hero:moveLeft(dt)
   elseif love.keyboard.isDown("right") then
     hero:moveRight(dt)
-  elseif love.keyboard.isDown("up") then
+  else
+    hero:stopHorizontal(dt)
+  end
+
+  if love.keyboard.isDown("up") then
     hero:moveUp(dt)
   elseif love.keyboard.isDown("down") then
     hero:moveDown(dt)
   else
-    hero:stop(dt)
+    hero:stopVertical(dt)
   end
+
 end
 
 function Hero:move(dt)
@@ -87,8 +92,11 @@ function Hero:moveDown(dt)
   self.ay = self.a_max
 end
 
-function Hero:stop(dt)
+function Hero:stopHorizontal(dt)
   self.ax = 0
+end
+
+function Hero:stopVertical(dt)
   self.ay = 0
 end
 
@@ -98,10 +106,16 @@ function Hero:shoot(dt)
   table.insert(world, shot)
 end
 
+-- draggable
+
+function Hero:drag(friction, dt)
+  self.vx = self.vx - friction * self.vx
+  self.vy = self.vy - friction * self.vy
+end
+
 -- hero state queries
 
 function Hero:bottom()
   return self.y + self.height / 2
 end
-
 
