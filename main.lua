@@ -1,6 +1,7 @@
+require('physics')
+
 require('hero')
 require('enemy')
-
 
 function love.load()
   world = {}
@@ -57,8 +58,8 @@ function love.update(dt)
   -- check for collisions between bullets and enemies
   for i, bullet in ipairs(projectiles) do
     for j, entity in ipairs(world) do
-      if checkCollision(bullet.x, bullet.y, bullet.width, bullet.height,
-                        entity.x, entity.y, entity.width, entity.height) then
+      if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
+                                entity.x, entity.y, entity.width, entity.height) then
         table.remove(world, j)
         Bullet.remove(i)
       end
@@ -68,8 +69,8 @@ function love.update(dt)
 
   -- check for collisions between hero and enemies
   for i, entity in ipairs(world) do
-    checkCollision(hero.x, hero.y, hero.width, hero.height,
-                   entity.x, entity.y, entity.width, entity.height)
+    physics.isCollide(hero.x, hero.y, hero.width, hero.height,
+                      entity.x, entity.y, entity.width, entity.height)
   end
 
   -- friction on the ground
@@ -105,22 +106,3 @@ function love.quit()
   print("Thanks for playing!")
 end
 
-function checkCollision(ax, ay, aw, ah, bx, by, bw, bh)
-  local aleft = ax - aw / 2
-  local aright = ax + aw / 2
-  local atop = ay - ah / 2
-  local abottom = ay + ah / 2
-
-  local bleft = bx - bw / 2
-  local bright = bx + bw / 2
-  local btop = by - bh / 2
-  local bbottom = by + bh / 2
-
-  return isOverlap(aleft, aright, bleft, bright)
-    and isOverlap(atop, abottom, btop, bbottom)
-end
-
-function isOverlap(amin, amax, bmin, bmax)
-  return (amax > bmin and amax < bmax) or (amin > bmin and amin < bmax)
-    or (bmin > amin and bmin < amax)
-end
