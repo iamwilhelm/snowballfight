@@ -24,7 +24,7 @@ function Bullet:init(x, y)
   self.y = y
   self.width = 5
   self.height = 10
-  self.speed = 150
+  self.speed = 300
   self.hero = hero
 end
 
