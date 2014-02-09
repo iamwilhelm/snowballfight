@@ -50,15 +50,14 @@ end
 function Hero:think(dt)
   if love.keyboard.isDown("left") then
     hero:moveLeft(dt)
-  end
-  if love.keyboard.isDown("right") then
+  elseif love.keyboard.isDown("right") then
     hero:moveRight(dt)
-  end
-  if love.keyboard.isDown("up") then
+  elseif love.keyboard.isDown("up") then
     hero:moveUp(dt)
-  end
-  if love.keyboard.isDown("down") then
+  elseif love.keyboard.isDown("down") then
     hero:moveDown(dt)
+  else
+    hero:stop(dt)
   end
 end
 
@@ -86,6 +85,11 @@ end
 
 function Hero:moveDown(dt)
   self.ay = self.a_max
+end
+
+function Hero:stop(dt)
+  self.ax = 0
+  self.ay = 0
 end
 
 function Hero:shoot(dt)
