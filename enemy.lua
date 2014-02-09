@@ -12,7 +12,6 @@ function Enemy:init(x, y)
   self.v_max = 20
   self.vx = 0
   self.vy = 0
-
 end
 
 function Enemy:draw()
@@ -29,7 +28,6 @@ function Enemy:update(dt)
 end
 
 function Enemy:think(dt)
-  print(rand:random())
   if rand:random() > 0.9 then
     if rand:random() > 0.5 then
       self.vx = self.v_max
@@ -50,6 +48,8 @@ function Enemy:move(dt)
   self.x = self.x + self.vx * dt
   self.y = self.y + self.vy * dt
 end
+
+-- query
 
 function Enemy:bottom()
   return self.y + self.height / 2
