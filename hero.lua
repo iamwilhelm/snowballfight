@@ -21,11 +21,11 @@ function Hero:init(x, y)
   self.x = x
   self.y = y
 
-  self.v_max = 150
+  self.v_max = 100
   self.vx = 0
   self.vy = 0
 
-  self.a_max = 500
+  self.a_max = 250
   self.ax = 0
   self.ay = 0
 
