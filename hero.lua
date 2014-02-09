@@ -1,33 +1,15 @@
-require('class')
+require('entity')
 require('bullet')
 
--- entity helper functions
-function limit(num, cap)
-  if num > cap then
-    return cap
-  end
-  if num < -cap then
-    return -cap
-  end
-  return num
-end
+Hero = Entity:new()
 
-Hero = class:new()
+print("Hero table:")
+print(Hero)
 
 function Hero:init(x, y)
-  self.width = 30
-  self.height = 30
-
-  self.x = x
-  self.y = y
-
-  self.v_max = 200
-  self.vx = 0
-  self.vy = 0
-
-  self.a_max = 400
-  self.ax = 0
-  self.ay = 0
+  self.__baseclass:init(x, y, 30, 30)
+  self:setMaxVelocity(200)
+  self:setMaxAccel(400)
 
   self.intent = nil
 end
@@ -64,14 +46,6 @@ function Hero:think(dt)
     hero:stopVertical(dt)
   end
 
-end
-
-function Hero:move(dt)
-  self.vx = limit(self.vx + self.ax * dt, self.v_max)
-  self.x = self.x + self.vx * dt
-
-  self.vy = limit(self.vy + self.ay * dt, self.v_max)
-  self.y = self.y + self.vy * dt
 end
 
 -- hero specific actions
@@ -111,11 +85,5 @@ end
 function Hero:drag(friction, dt)
   self.vx = self.vx - friction * self.vx
   self.vy = self.vy - friction * self.vy
-end
-
--- hero state queries
-
-function Hero:bottom()
-  return self.y + self.height / 2
 end
 
