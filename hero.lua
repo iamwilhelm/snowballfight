@@ -1,6 +1,17 @@
 require('class')
 require('bullet')
 
+-- entity helper functions
+function limit(num, cap)
+  if num > cap then
+    return cap
+  end
+  if num < -cap then
+    return -cap
+  end
+  return num
+end
+
 Hero = class:new()
 
 function Hero:init(x, y)
@@ -52,18 +63,11 @@ function Hero:think(dt)
 end
 
 function Hero:move(dt)
-  self.vx = self.vx + self.ax * dt
-  if self.vx > self.v_max then
-    self.vx = self.v_max
-  end
-  if self.vx < -self.v_max then
-    self.vx = -self.v_max
-  end
-
-  --self.vy = self.vy + self.ay * dt
-
+  self.vx = limit(self.vx + self.ax * dt, self.v_max)
   self.x = self.x + self.vx * dt
-  --self.y = self.y + self.vx * dt
+
+  self.vy = limit(self.vy + self.ay * dt, self.v_max)
+  self.y = self.y + self.vy * dt
 end
 
 -- hero specific actions
@@ -90,6 +94,7 @@ function Hero:shoot(dt)
   table.insert(world, shot)
 end
 
+-- hero state queries
 
 function Hero:bottom()
   return self.y + self.height / 2
