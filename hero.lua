@@ -21,11 +21,11 @@ function Hero:init(x, y)
   self.x = x
   self.y = y
 
-  self.v_max = 150
+  self.v_max = 200
   self.vx = 0
   self.vy = 0
 
-  self.a_max = 300
+  self.a_max = 400
   self.ax = 0
   self.ay = 0
 
@@ -48,17 +48,17 @@ function Hero:update(dt)
 end
 
 function Hero:think(dt)
-  if love.keyboard.isDown("left") then
+  if love.keyboard.isDown("a") then
     hero:moveLeft(dt)
-  elseif love.keyboard.isDown("right") then
+  elseif love.keyboard.isDown("d") then
     hero:moveRight(dt)
   else
     hero:stopHorizontal(dt)
   end
 
-  if love.keyboard.isDown("up") then
+  if love.keyboard.isDown("w") then
     hero:moveUp(dt)
-  elseif love.keyboard.isDown("down") then
+  elseif love.keyboard.isDown("s") then
     hero:moveDown(dt)
   else
     hero:stopVertical(dt)
