@@ -57,6 +57,10 @@ function Entity:setMaxAccel(max)
   self.a_max = max
 end
 
+function Entity:think(dt)
+  -- no thinking by default
+end
+
 function Entity:move(dt)
   self.vx = Entity.limit(self.vx + self.ax * dt, self.v_max)
   self.x = self.x + self.vx * dt

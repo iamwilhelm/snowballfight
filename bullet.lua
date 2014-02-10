@@ -1,6 +1,8 @@
 require('class')
 
-Bullet = class:new()
+Bullet = Entity:new()
+print("Bullet")
+print(Bullet)
 
 function Bullet.add(bullet)
   table.insert(projectiles, bullet)
@@ -20,12 +22,17 @@ function Bullet.removeAllOutOfView()
 end
 
 function Bullet:init(x, y)
-  self.x = x
-  self.y = y
-  self.width = 5
-  self.height = 10
-  self.speed = 300
-  self.hero = hero
+  self.__baseclass:init(x, y)
+
+  if self ~= Bullet then
+    self:setPosition(x, y)
+    self:setVelocity(0, -300)
+    self:setDimension(5, 10)
+    self:setMaxVelocity(300)
+
+    -- TODO global
+    self.hero = hero
+  end
 end
 
 function Bullet:draw()
@@ -37,6 +44,7 @@ function Bullet:draw()
 end
 
 function Bullet:update(dt)
-  -- move the bullet on its trajectory
-  self.y = self.y - dt * self.speed
+  self:think(dt)
+  self:move(dt)
 end
+
