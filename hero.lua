@@ -2,16 +2,21 @@ require('entity')
 require('bullet')
 
 Hero = Entity:new()
-
-print("Hero table:")
+print("Hero")
 print(Hero)
 
 function Hero:init(x, y)
   self.__baseclass:init(x, y, 30, 30)
-  self:setMaxVelocity(200)
-  self:setMaxAccel(400)
 
-  self.intent = nil
+  if self ~= Hero then
+    self:setPosition(x, y)
+    self:setDimension(30, 30)
+
+    self:setMaxVelocity(200)
+    self:setMaxAccel(400)
+
+    self.intent = nil
+  end
 end
 
 function Hero:draw()

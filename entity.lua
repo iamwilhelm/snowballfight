@@ -1,9 +1,10 @@
 require('class')
 
 Entity = class:new()
-
-print("Entity table:")
+print("Entity")
 print(Entity)
+
+-- class methods
 
 function Entity.limit(num, cap)
   if num > cap then
@@ -15,18 +16,37 @@ function Entity.limit(num, cap)
   return num
 end
 
-function Entity:init(x, y, w, h)
-  self.width = 30
-  self.height = 30
+-- instance methods
 
+function Entity:init(x, y, w, h)
+  -- set default and shared values
+  self:setDimension(w, h)
+  self:setPosition(x, y)
+  self:setVelocity(0, 0)
+  self:setAccel(0, 0)
+
+  self:setMaxVelocity(200)
+  self:setMaxAccel(400)
+end
+
+function Entity:setDimension(w, h)
+  self.width = w
+  self.height = h
+end
+
+function Entity:setPosition(x, y)
   self.x = x
   self.y = y
+end
 
-  self.vx = 0
-  self.vy = 0
+function Entity:setVelocity(vx, vy)
+  self.vx = vx
+  self.vy = vy
+end
 
-  self.ax = 0
-  self.ay = 0
+function Entity:setAccel(ax, ay)
+  self.ax = ax
+  self.ay = ay
 end
 
 function Entity:setMaxVelocity(max)

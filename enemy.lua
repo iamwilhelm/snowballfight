@@ -1,17 +1,18 @@
 require('class')
+require('entity')
 
-Enemy = class:new()
+Enemy = Entity:new()
 
 function Enemy:init(x, y)
-  self.width = 40
-  self.height = 20
+  self.__baseclass:init(x, y, 40, 20)
 
-  self.x = x
-  self.y = y
+  if self ~= Enemy then
+    self:setPosition(x, y)
+    self:setDimension(40, 20)
 
-  self.v_max = 20
-  self.vx = 0
-  self.vy = 0
+    self:setMaxVelocity(20)
+    self:setMaxAccel(1000)
+  end
 end
 
 function Enemy:draw()
@@ -48,12 +49,5 @@ function Enemy:move(dt)
   self.x = self.x + self.vx * dt
   self.y = self.y + self.vy * dt
 end
-
--- query
-
-function Enemy:bottom()
-  return self.y + self.height / 2
-end
-
 
 

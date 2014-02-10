@@ -59,7 +59,7 @@ function love.update(dt)
   for i, bullet in ipairs(projectiles) do
     for j, entity in ipairs(world) do
       if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
-                                entity.x, entity.y, entity.width, entity.height) then
+                           entity.x, entity.y, entity.width, entity.height) then
         table.remove(world, j)
         Bullet.remove(i)
       end

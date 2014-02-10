@@ -27,6 +27,7 @@ __HAS_SECS_COMPATIBLE_CLASSES__ = true
 
 local class_mt = {}
 
+-- self in this case is the original table who was missing 'key', not class_mt
 function class_mt:__index(key)
   return self.__baseclass[key]
 end
