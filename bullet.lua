@@ -1,4 +1,4 @@
-require('class')
+require('entity')
 
 Bullet = Entity:new()
 print("Bullet")
