@@ -6,7 +6,7 @@ print("Hero")
 print(Hero)
 
 function Hero:init(x, y)
-  self.__baseclass:init(x, y, 30, 30)
+  self.__baseclass:init()
 
   if self ~= Hero then
     self:setPosition(x, y)

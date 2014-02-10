@@ -4,7 +4,7 @@ require('entity')
 Enemy = Entity:new()
 
 function Enemy:init(x, y)
-  self.__baseclass:init(x, y, 40, 20)
+  self.__baseclass:init()
 
   if self ~= Enemy then
     self:setPosition(x, y)
