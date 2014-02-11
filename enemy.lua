@@ -11,7 +11,7 @@ function Enemy:init(x, y)
 
   if self ~= Enemy then
     self:setPosition(x, y)
-    self:setDimension(32, 48)
+    self:setDimension(32, 40)
 
     self:setMaxVelocity(20)
     self:setMaxAccel(1000)
