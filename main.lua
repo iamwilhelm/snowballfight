@@ -59,9 +59,10 @@ function love.update(dt)
   end)
 
   -- check for collisions between hero and enemies
-  world:each_enemy(function(enemies, j)
-    -- physics.isCollide(hero.x, hero.y, hero.width, hero.height,
-    --                  entity.x, entity.y, entity.width, entity.height)
+  world:each_enemy(function(enemy, j)
+    if physics.isCollide(hero, enemy) then
+      hero:markForDeletion()
+    end
   end)
 
   -- friction on the ground
