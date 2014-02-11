@@ -2,41 +2,42 @@ require('physics')
 
 require('world')
 require('hero')
+require('bullet')
 require('enemy')
 
+require('camera')
+require('map')
+
 function love.load()
+  -- initialize world objects
+
   world = World:new()
-  image = love.graphics.newImage("assets/secretofmana.png")
 
   hero = Hero:new(300, 400)
   world:add(hero)
-
   for i = 0, 6 do
     local enemy = Enemy:new(i * 100 + 100, 300)
     world:add(enemy)
   end
+
+  -- initialize map and tiles
+
+  image = love.graphics.newImage("assets/secretofmana.png")
+  map = Map:new(60, 40)
+  map:setupTileset("assets/tileset.png")
+
+  camera = Camera:new(love.window.getDimensions(), 1)
 
   rand = love.math.newRandomGenerator()
   rand:setSeed(os.time())
 end
 
 function love.draw()
-  -- background
-  love.graphics.setColor(255, 255, 255, 255)
-  -- love.graphics.draw(image)
-
-  -- sky
-  love.graphics.setColor(0, 200, 200, 255)
-  love.graphics.rectangle("fill", 0, 0, 800, 200)
-
-  -- ground
-  love.graphics.setColor(0, 200, 0, 255)
-  love.graphics.rectangle("fill", 0, 200, 800, 400)
+  -- draw the map
+  map:draw()
 
   -- the order to be drawn should be sorted according to z-order
-  --table.sort(world:all(), function(a, b)
-  --  return a:bottom() < b:bottom()
-  --end)
+  world:sortByY()
 
   -- draw entities
   world:each(function (entity, i)
@@ -81,8 +82,6 @@ function love.update(dt)
 
   world:removeOutOfView()
   world:removeMarkedForDeletion()
-
-  world:sortByY()
 
   -- check for win or lose
 end
