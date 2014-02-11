@@ -1,6 +1,7 @@
 require('entity')
 
-Bullet = Entity:new()
+Bullet = Entity:new("projectile")
+
 print("Bullet")
 print(Bullet)
 

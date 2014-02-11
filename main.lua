@@ -9,11 +9,11 @@ function love.load()
   image = love.graphics.newImage("assets/secretofmana.png")
 
   hero = Hero:new(300, 400)
-  world:add('friendlies', hero)
+  world:add(hero)
 
   for i = 0, 6 do
     local enemy = Enemy:new(i * 100 + 100, 300)
-    world:add('enemies', enemy)
+    world:add(enemy)
   end
 
   rand = love.math.newRandomGenerator()
@@ -34,9 +34,9 @@ function love.draw()
   love.graphics.rectangle("fill", 0, 200, 800, 400)
 
   -- the order to be drawn should be sorted according to z-order
-  table.sort(world, function(a, b)
-    return a:bottom() < b:bottom()
-  end)
+  --table.sort(world:all(), function(a, b)
+  --  return a:bottom() < b:bottom()
+  --end)
 
   -- draw entities
   world:each(function (entity, i)
@@ -55,8 +55,10 @@ function love.update(dt)
     world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
                            enemy.x, enemy.y, enemy.width, enemy.height) then
-        world:remove('enemies', j)
-        world:remove('projectiles', i)
+        -- should mark entities for removal, so i and j can be removed without as shift
+        -- in indicies
+        world:remove(i)
+        world:remove(j)
       end
     end)
   end)
@@ -77,7 +79,7 @@ function love.update(dt)
   -------------- move entities -------------
 
   -- move all entities
-  world:each(function(entity)
+  world:each(function(entity, i)
     entity:update(dt)
   end)
 

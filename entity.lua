@@ -1,6 +1,7 @@
 require('class')
 
 Entity = class:new()
+
 print("Entity")
 print(Entity)
 
@@ -18,7 +19,9 @@ end
 
 -- instance methods
 
-function Entity:init()
+function Entity:init(typename)
+  self.typename = typename
+
   -- set default and shared values
   self:setDimension(40, 40)
   self:setPosition(0, 0)

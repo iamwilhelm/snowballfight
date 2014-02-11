@@ -1,7 +1,8 @@
 require('entity')
 require('bullet')
 
-Hero = Entity:new()
+Hero = Entity:new("friendly")
+
 print("Hero")
 print(Hero)
 
@@ -82,7 +83,7 @@ end
 function Hero:shoot(dt)
   local bullet = Bullet:new(self.x, self.y - self.height)
   -- TODO global
-  world:add('projectiles', bullet)
+  world:add(bullet)
 end
 
 -- draggable

@@ -1,7 +1,10 @@
 require('class')
 require('entity')
 
-Enemy = Entity:new()
+Enemy = Entity:new("enemy")
+
+print("Enemy")
+print(Enemy)
 
 function Enemy:init(x, y)
   self.__baseclass:init()
