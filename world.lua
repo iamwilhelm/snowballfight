@@ -18,6 +18,11 @@ function World:remove(category, i)
   table.remove(self["_" .. category], i)
 end
 
+-- TODO implement method missing, so we don't need all these access methods
+-- function World:method_missing(key)
+--   print("method missing!")
+-- end
+
 function World:each(iter)
   local count = 0
   self:each_actor(function(e, i)

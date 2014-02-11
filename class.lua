@@ -29,7 +29,10 @@ local class_mt = {}
 
 -- self in this case is the original table who was missing 'key', not class_mt
 function class_mt:__index(key)
-  return self.__baseclass[key]
+  if self.__baseclass[key] then
+    return self.__baseclass[key]
+  end
+  -- self:method_missing(key)
 end
 
 class = setmetatable({ __baseclass = {} }, class_mt)
