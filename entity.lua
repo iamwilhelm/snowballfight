@@ -18,10 +18,10 @@ end
 
 -- instance methods
 
-function Entity:init(x, y, w, h)
+function Entity:init()
   -- set default and shared values
-  self:setDimension(w, h)
-  self:setPosition(x, y)
+  self:setDimension(40, 40)
+  self:setPosition(0, 0)
   self:setVelocity(0, 0)
   self:setAccel(0, 0)
 

@@ -81,8 +81,8 @@ end
 
 function Hero:shoot(dt)
   local bullet = Bullet:new(self.x, self.y - self.height)
-  table.insert(projectiles, bullet)
-  table.insert(world, shot)
+  -- TODO global
+  world:add('projectiles', bullet)
 end
 
 -- draggable
