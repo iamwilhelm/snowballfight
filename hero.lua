@@ -11,7 +11,7 @@ function Hero:init(x, y)
 
   if self ~= Hero then
     self:setPosition(x, y)
-    self:setDimension(30, 30)
+    self:setDimension(32, 48)
 
     self:setMaxVelocity(200)
     self:setMaxAccel(400)

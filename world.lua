@@ -72,5 +72,9 @@ function World:removeMarkedForDeletion()
   end)
 end
 
-
+function World:sortByY()
+  table.sort(world:all(), function(a, b)
+    return a:bottom() < b:bottom()
+  end)
+end
 

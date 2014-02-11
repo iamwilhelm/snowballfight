@@ -59,11 +59,11 @@ function love.update(dt)
   end)
 
   -- check for collisions between hero and enemies
-  world:each_enemy(function(enemy, j)
-    if physics.isCollide(hero, enemy) then
-      hero:markForDeletion()
-    end
-  end)
+  -- world:each_enemy(function(enemy, j)
+  --   if physics.isCollide(hero, enemy) then
+  --     hero:markForDeletion()
+  --   end
+  -- end)
 
   -- friction on the ground
   world:each_actor(function(entity, i)
@@ -79,11 +79,12 @@ function love.update(dt)
     entity:update(dt)
   end)
 
-  -- check for win or lose
-
   world:removeOutOfView()
   world:removeMarkedForDeletion()
 
+  world:sortByY()
+
+  -- check for win or lose
 end
 
 function love.keyreleased(key)
