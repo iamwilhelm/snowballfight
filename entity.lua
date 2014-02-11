@@ -21,6 +21,7 @@ end
 
 function Entity:init(typename)
   self.typename = typename
+  self.toDelete = false
 
   -- set default and shared values
   self:setDimension(40, 40)
@@ -70,6 +71,10 @@ function Entity:move(dt)
 
   self.vy = Entity.limit(self.vy + self.ay * dt, self.v_max)
   self.y = self.y + self.vy * dt
+end
+
+function Entity:markForDeletion()
+  self.toDelete = true
 end
 
 -- entity state queries

@@ -56,9 +56,17 @@ function World:each_projectile(iter)
 end
 
 -- should know something about the field of view or bullet range from point of origin
-function World:removeAllOutOfView()
+function World:removeOutOfView()
   self:each_projectile(function(bullet, i)
     if bullet.y < 0 then
+      self:remove(i)
+    end
+  end)
+end
+
+function World:removeMarkedForDeletion()
+  self:each(function(entity, i)
+    if entity.toDelete == true then
       self:remove(i)
     end
   end)

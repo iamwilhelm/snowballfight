@@ -45,8 +45,6 @@ function love.draw()
 end
 
 function love.update(dt)
-  world:removeAllOutOfView()
-
   --------------- physics ----------------
 
   -- check for collisions between bullets and enemies
@@ -55,10 +53,8 @@ function love.update(dt)
     world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
                            enemy.x, enemy.y, enemy.width, enemy.height) then
-        -- should mark entities for removal, so i and j can be removed without as shift
-        -- in indicies
-        world:remove(i)
-        world:remove(j)
+        enemy:markForDeletion()
+        bullet:markForDeletion()
       end
     end)
   end)
@@ -84,6 +80,10 @@ function love.update(dt)
   end)
 
   -- check for win or lose
+
+  world:removeOutOfView()
+  world:removeMarkedForDeletion()
+
 end
 
 function love.keyreleased(key)
