@@ -9,11 +9,11 @@ function love.load()
   image = love.graphics.newImage("assets/secretofmana.png")
 
   hero = Hero:new(300, 400)
-  world:add('entities', hero)
+  world:add('friendlies', hero)
 
   for i = 0, 6 do
     local enemy = Enemy:new(i * 100 + 100, 300)
-    world:add('entities', enemy)
+    world:add('enemies', enemy)
   end
 
   rand = love.math.newRandomGenerator()
@@ -38,15 +38,10 @@ function love.draw()
     return a:bottom() < b:bottom()
   end)
 
-  -- entities
-  for i, entity in ipairs(world:entities()) do
+  -- draw entities
+  world:each(function (entity, i)
     entity:draw()
-  end
-
-  -- projectiles
-  for i, projectile in ipairs(world:projectiles()) do
-    projectile:draw()
-  end
+  end)
 end
 
 function love.update(dt)
@@ -55,40 +50,36 @@ function love.update(dt)
   --------------- physics ----------------
 
   -- check for collisions between bullets and enemies
-  for i, bullet in ipairs(world:projectiles()) do
-    for j, entity in ipairs(world:entities()) do
+  -- for i, bullet in ipairs(world:projectiles()) do
+  world:each_projectile(function(bullet, i)
+    world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
-                           entity.x, entity.y, entity.width, entity.height) then
-        world:remove('entities', j)
+                           enemy.x, enemy.y, enemy.width, enemy.height) then
+        world:remove('enemies', j)
         world:remove('projectiles', i)
       end
-    end
-  end
+    end)
+  end)
 
   -- check for collisions between hero and enemies
-  for i, entity in ipairs(world:entities()) do
-    --physics.isCollide(hero.x, hero.y, hero.width, hero.height,
+  world:each_enemy(function(enemies, j)
+    -- physics.isCollide(hero.x, hero.y, hero.width, hero.height,
     --                  entity.x, entity.y, entity.width, entity.height)
-  end
+  end)
 
   -- friction on the ground
-  for i, entity in ipairs(world:entities()) do
+  world:each_actor(function(entity, i)
     if entity.drag then
       entity:drag(0.05, dt)
     end
-  end
+  end)
 
   -------------- move entities -------------
 
-  -- move the bullets
-  for i, bullet in ipairs(world:projectiles()) do
-    bullet:update(dt)
-  end
-
-  -- move all entities in the world
-  for i, entity in ipairs(world:entities()) do
+  -- move all entities
+  world:each(function(entity)
     entity:update(dt)
-  end
+  end)
 
   -- check for win or lose
 end
