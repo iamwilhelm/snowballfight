@@ -13,7 +13,7 @@ function Map:init(width, height)
   for x = 1, self.mapWidth do
     self.map[x] = {}
     for y = 1, self.mapHeight do
-      self.map[x][y] = math.random(0, 2)
+      self.map[x][y] = math.random(0, 4)
     end
   end
 
@@ -34,20 +34,20 @@ function Map:setupTileset(filename)
   self.tileSizeX = 32
   self.tileSizeY = 32
 
-  -- grass
-  self.tileQuads[0] = love.graphics.newQuad(0 * self.tileSizeX, 20 * self.tileSizeY,
+  -- grass1
+  self.tileQuads[0] = love.graphics.newQuad(5 * self.tileSizeX, 17 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- stone
-  self.tileQuads[1] = love.graphics.newQuad(1 * self.tileSizeX, 20 * self.tileSizeY,
+  -- grass2
+  self.tileQuads[2] = love.graphics.newQuad(5 * self.tileSizeX, 18 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- tree
-  self.tileQuads[2] = love.graphics.newQuad(2 * self.tileSizeX, 20 * self.tileSizeY,
+  -- pebble
+  self.tileQuads[1] = love.graphics.newQuad(5 * self.tileSizeX, 19 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- stump
-  self.tileQuads[3] = love.graphics.newQuad(3 * self.tileSizeX, 20 * self.tileSizeY,
+  -- flower1
+  self.tileQuads[3] = love.graphics.newQuad(6 * self.tileSizeX, 18 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- dead tree
-  self.tileQuads[4] = love.graphics.newQuad(4 * self.tileSizeX, 20 * self.tileSizeY,
+  -- flower2
+  self.tileQuads[4] = love.graphics.newQuad(6 * self.tileSizeX, 19 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
 
 
