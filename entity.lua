@@ -79,6 +79,18 @@ end
 
 -- entity state queries
 
+function Entity:left()
+  return self.x - self.height / 2
+end
+
+function Entity:right()
+  return self.x + self.height / 2
+end
+
+function Entity:top()
+  return self.y - self.height / 2
+end
+
 function Entity:bottom()
   return self.y + self.height / 2
 end

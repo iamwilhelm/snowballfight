@@ -51,8 +51,7 @@ function love.update(dt)
   -- for i, bullet in ipairs(world:projectiles()) do
   world:each_projectile(function(bullet, i)
     world:each_enemy(function(enemy, j)
-      if physics.isCollide(bullet.x, bullet.y, bullet.width, bullet.height,
-                           enemy.x, enemy.y, enemy.width, enemy.height) then
+      if physics.isCollide(bullet, enemy) then
         enemy:markForDeletion()
         bullet:markForDeletion()
       end
