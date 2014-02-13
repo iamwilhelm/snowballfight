@@ -5,9 +5,11 @@ Map = class:new()
 print("Map")
 print(Map)
 
-function Map:init(width, height)
-  self.mapWidth = width
-  self.mapHeight = height
+function Map:init(mapWidth, mapHeight)
+  self.mapWidth = mapWidth
+  self.mapHeight = mapHeight
+  self.tileWidth = 32
+  self.tileHeight = 32
 
   self.map = {}
   for x = 1, self.mapWidth do
@@ -21,25 +23,22 @@ function Map:init(width, height)
   self.tileQuads = {}
 
   -- number of tiles to display
-  self.tilesDisplayWidth = 26
-  self.tilesDisplayHeight = 20
+  self.viewTileWidth = math.floor(800 / self.tileWidth) + 1
+  self.viewTileHeight = math.floor(600 / self.tileHeight) + 1
 
-  -- view x,y in tiles
-  self.tileDisplayX = 1
-  self.tileDisplayY = 1
-  self.displayZoomX = 1
-  self.displayZoomY = 1
+  -- viewport
+  self.viewportX = 0
+  self.viewportY = 0
+  self.zoomX = 1
+  self.zoomY = 1
 end
 
 function Map:setupTileset(filename)
   tilesetImage = love.graphics.newImage(filename)
   tilesetImage:setFilter("nearest", "linear")
-  self.tileSizeX = 32
-  self.tileSizeY = 32
 
-
-  function getQuadAt(tileX, tileY)
-    return love.graphics.newQuad(tileX * self.tileWidth, tileY * self.tileHeight,
+  function getQuadAt(viewportX, viewportY)
+    return love.graphics.newQuad(viewportX * self.tileWidth, viewportY * self.tileHeight,
                                  self.tileWidth, self.tileHeight,
                                  tilesetImage:getWidth(), tilesetImage:getHeight())
   end
@@ -52,8 +51,9 @@ function Map:setupTileset(filename)
   self.tileQuads[5] = getQuadAt(4, 18) -- stone
   self.tileQuads[6] = getQuadAt(4, 19) -- stone2
 
-  self.tilesetBatch = love.graphics.newSpriteBatch(tilesetImage,
-    self.tilesDisplayWidth * self.tilesDisplayHeight)
+  local totalNumOfTiles = self.viewTileWidth * self.viewTileHeight
+  self.tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, totalNumOfTiles)
+
   self:update(0)
 end
 
@@ -61,52 +61,24 @@ function Map:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(
     self.tilesetBatch,
-    math.floor(-self.displayZoomX * (self.tileDisplayX % 1) * self.tileSizeX),
-    math.floor(-self.displayZoomY * (self.tileDisplayY % 1) * self.tileSizeY),
+    math.floor(-self.zoomX * (self.viewportX % 1) * self.tileWidth),
+    math.floor(-self.zoomY * (self.viewportY % 1) * self.tileHeight),
     0,
-    self.displayZoomX,
-    self.displayZoomY
+    self.zoomX,
+    self.zoomY
   )
 end
 
 function Map:update(dt)
   self.tilesetBatch:clear()
-  for tileX = 1, self.tilesDisplayWidth do
-    for tileY = 1, self.tilesDisplayHeight do
-      self.tilesetBatch:add(self:tileQuadAt(tileX + math.floor(self.tileDisplayX),
-                                            tileY + math.floor(self.tileDisplayY)),
-                            (tileX - 1) * self.tileSizeX,
-                            (tileY - 1) * self.tileSizeY)
+  for tileX = 1, self.viewTileWidth do
+    for tileY = 1, self.viewTileHeight do
+      local quad = self:tileQuadAt(tileX + math.floor(self.viewportX),
+                                   tileY + math.floor(self.viewportY))
+      local mapX = (tileX - 1) * self.tileWidth
+      local mapY = (tileY - 1) * self.tileHeight
+      self.tilesetBatch:add(quad, mapX, mapY)
     end
-  end
-end
-
-function Map:think(dt)
-  if love.keyboard.isDown("up")  then
-    self:move(0, -0.2 * self.tileSizeY * dt)
-  end
-  if love.keyboard.isDown("down")  then
-    self:move(0, 0.2 * self.tileSizeY * dt)
-  end
-  if love.keyboard.isDown("left")  then
-    self:move(-0.2 * self.tileSizeX * dt, 0)
-  end
-  if love.keyboard.isDown("right")  then
-    self:move(0.2 * self.tileSizeX * dt, 0)
-  end
-end
-
-function Map:move(dx, dy, dt)
-  oldTileDisplayX = self.tileDisplayX
-  oldTileDisplayY = self.tileDisplayY
-
-  self.tileDisplayX = math.max(math.min(self.tileDisplayX + dx,
-                                        self.mapWidth - self.tilesDisplayWidth), 1)
-  self.tileDisplayY = math.max(math.min(self.tileDisplayY + dy,
-                                        self.mapHeight - self.tilesDisplayHeight), 1)
-
-  if math.floor(self.tileDisplayX) ~= math.floor(oldTileDisplayX) or math.floor(self.tileDisplayX) ~= math.floor(oldTileDisplayY) then
-    self:update(dt)
   end
 end
 
@@ -114,4 +86,34 @@ function Map:tileQuadAt(tileX, tileY)
   local tiletype = self.map[tileX][tileY]
   return self.tileQuads[tiletype]
 end
+
+function Map:think(dt)
+  if love.keyboard.isDown("up")  then
+    self:move(0, -0.2 * self.tileHeight * dt)
+  end
+  if love.keyboard.isDown("down")  then
+    self:move(0, 0.2 * self.tileHeight * dt)
+  end
+  if love.keyboard.isDown("left")  then
+    self:move(-0.2 * self.tileWidth * dt, 0)
+  end
+  if love.keyboard.isDown("right")  then
+    self:move(0.2 * self.tileWidth * dt, 0)
+  end
+end
+
+function Map:move(dx, dy, dt)
+  oldTileDisplayX = self.viewportX
+  oldTileDisplayY = self.viewportY
+
+  self.viewportX = math.max(math.min(self.viewportX + dx,
+                                     self.mapWidth - self.viewTileWidth), 1)
+  self.viewportY = math.max(math.min(self.viewportY + dy,
+                                     self.mapHeight - self.viewTileHeight), 1)
+
+  if math.floor(self.viewportX) ~= math.floor(oldTileDisplayX) or math.floor(self.viewportX) ~= math.floor(oldTileDisplayY) then
+    self:update(dt)
+  end
+end
+
 
