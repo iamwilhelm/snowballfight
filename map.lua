@@ -21,8 +21,8 @@ function Map:init(width, height)
   self.tileQuads = {}
 
   -- number of tiles to display
-  self.tilesDisplayWidth = 25
-  self.tilesDisplayHeight = 19
+  self.tilesDisplayWidth = 26
+  self.tilesDisplayHeight = 20
 
   -- view x,y in tiles
   self.tileDisplayX = 1
@@ -66,17 +66,40 @@ end
 
 function Map:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(self.tilesetBatch)
+  love.graphics.draw(
+    self.tilesetBatch,
+    math.floor(-self.displayZoomX * (self.tileDisplayX % 1) * self.tileSizeX),
+    math.floor(-self.displayZoomY * (self.tileDisplayY % 1) * self.tileSizeY),
+    0,
+    self.displayZoomX,
+    self.displayZoomY
+  )
 end
 
 function Map:update(dt)
   self.tilesetBatch:clear()
   for tileX = 1, self.tilesDisplayWidth do
     for tileY = 1, self.tilesDisplayHeight do
-      self.tilesetBatch:add(self:tileQuadAt(tileX, tileY),
+      self.tilesetBatch:add(self:tileQuadAt(tileX + math.floor(self.tileDisplayX),
+                                            tileY + math.floor(self.tileDisplayY)),
                             (tileX - 1) * self.tileSizeX,
                             (tileY - 1) * self.tileSizeY)
     end
+  end
+end
+
+function Map:think(dt)
+  if love.keyboard.isDown("up")  then
+    self:move(0, -0.2 * self.tileSizeY * dt)
+  end
+  if love.keyboard.isDown("down")  then
+    self:move(0, 0.2 * self.tileSizeY * dt)
+  end
+  if love.keyboard.isDown("left")  then
+    self:move(-0.2 * self.tileSizeX * dt, 0)
+  end
+  if love.keyboard.isDown("right")  then
+    self:move(0.2 * self.tileSizeX * dt, 0)
   end
 end
 

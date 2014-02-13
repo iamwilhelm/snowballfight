@@ -9,6 +9,9 @@ require('camera')
 require('map')
 
 function love.load()
+  rand = love.math.newRandomGenerator()
+  rand:setSeed(os.time())
+
   -- initialize world objects
 
   world = World:new()
@@ -26,17 +29,16 @@ function love.load()
   map = Map:new(60, 40)
   map:setupTileset("assets/tileset.png")
 
-  camera = Camera:new(0, 0)
+  -- initialize camera
 
-  rand = love.math.newRandomGenerator()
-  rand:setSeed(os.time())
+  camera = Camera:new(0, 0)
 end
 
 function love.draw()
-  camera:set()
-
   -- draw the map
   map:draw()
+
+  camera:set()
 
   -- the order to be drawn should be sorted according to z-order
   world:sortByY()
@@ -63,13 +65,6 @@ function love.update(dt)
     end)
   end)
 
-  -- check for collisions between hero and enemies
-  -- world:each_enemy(function(enemy, j)
-  --   if physics.isCollide(hero, enemy) then
-  --     hero:markForDeletion()
-  --   end
-  -- end)
-
   -- friction on the ground
   world:each_actor(function(entity, i)
     if entity.drag then
@@ -79,7 +74,9 @@ function love.update(dt)
 
   -------------- move entities -------------
 
-  -- move all entities
+  -- update all entities. Includes thinking and moving
+  -- TODO thinking and moving should be separate. Not all entities need to think
+  -- on every cycle.
   world:each(function(entity, i)
     entity:update(dt)
   end)
@@ -89,6 +86,8 @@ function love.update(dt)
 
   camera:update(dt)
   camera:drag(0.05, dt)
+
+  map:think(dt)
 
   -- check for win or lose
 end
