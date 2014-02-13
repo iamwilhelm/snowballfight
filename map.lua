@@ -13,19 +13,22 @@ function Map:init(width, height)
   for x = 1, self.mapWidth do
     self.map[x] = {}
     for y = 1, self.mapHeight do
-      self.map[x][y] = math.random(0, 4)
+      self.map[x][y] = math.random(0, 3)
     end
   end
+  self.map[1][1] = 5
 
   self.tileQuads = {}
 
   -- number of tiles to display
-  self.tilesDisplayWidth = 26
-  self.tilesDisplayHeight = 20
+  self.tilesDisplayWidth = 25
+  self.tilesDisplayHeight = 19
 
   -- view x,y in tiles
   self.tileDisplayX = 1
   self.tileDisplayY = 1
+  self.displayZoomX = 1
+  self.displayZoomY = 1
 end
 
 function Map:setupTileset(filename)
@@ -49,7 +52,12 @@ function Map:setupTileset(filename)
   -- flower2
   self.tileQuads[4] = love.graphics.newQuad(6 * self.tileSizeX, 19 * self.tileSizeY,
     self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-
+  -- stone
+  self.tileQuads[5] = love.graphics.newQuad(4 * self.tileSizeX, 18 * self.tileSizeY,
+    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
+  -- stone2
+  self.tileQuads[6] = love.graphics.newQuad(4 * self.tileSizeX, 19 * self.tileSizeY,
+    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
 
   self.tilesetBatch = love.graphics.newSpriteBatch(tilesetImage,
     self.tilesDisplayWidth * self.tilesDisplayHeight)
@@ -63,16 +71,31 @@ end
 
 function Map:update(dt)
   self.tilesetBatch:clear()
-  for tileX = 0, self.tilesDisplayWidth - 1 do
-    for tileY = 0, self.tilesDisplayHeight - 1 do
+  for tileX = 1, self.tilesDisplayWidth do
+    for tileY = 1, self.tilesDisplayHeight do
       self.tilesetBatch:add(self:tileQuadAt(tileX, tileY),
-                            tileX * self.tileSizeX, tileY * self.tileSizeY)
+                            (tileX - 1) * self.tileSizeX,
+                            (tileY - 1) * self.tileSizeY)
     end
   end
 end
 
+function Map:move(dx, dy, dt)
+  oldTileDisplayX = self.tileDisplayX
+  oldTileDisplayY = self.tileDisplayY
+
+  self.tileDisplayX = math.max(math.min(self.tileDisplayX + dx,
+                                        self.mapWidth - self.tilesDisplayWidth), 1)
+  self.tileDisplayY = math.max(math.min(self.tileDisplayY + dy,
+                                        self.mapHeight - self.tilesDisplayHeight), 1)
+
+  if math.floor(self.tileDisplayX) ~= math.floor(oldTileDisplayX) or math.floor(self.tileDisplayX) ~= math.floor(oldTileDisplayY) then
+    self:update(dt)
+  end
+end
+
 function Map:tileQuadAt(tileX, tileY)
-  local tiletype = self.map[tileX + 1][tileY + 1]
+  local tiletype = self.map[tileX][tileY]
   return self.tileQuads[tiletype]
 end
 

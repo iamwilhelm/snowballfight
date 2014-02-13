@@ -26,13 +26,15 @@ function love.load()
   map = Map:new(60, 40)
   map:setupTileset("assets/tileset.png")
 
-  camera = Camera:new(love.window.getDimensions(), 1)
+  camera = Camera:new(0, 0)
 
   rand = love.math.newRandomGenerator()
   rand:setSeed(os.time())
 end
 
 function love.draw()
+  camera:set()
+
   -- draw the map
   map:draw()
 
@@ -43,6 +45,8 @@ function love.draw()
   world:each(function (entity, i)
     entity:draw()
   end)
+
+  camera:unset()
 end
 
 function love.update(dt)
@@ -82,6 +86,9 @@ function love.update(dt)
 
   world:removeOutOfView()
   world:removeMarkedForDeletion()
+
+  camera:update(dt)
+  camera:drag(0.05, dt)
 
   -- check for win or lose
 end
