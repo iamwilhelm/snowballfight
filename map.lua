@@ -37,27 +37,20 @@ function Map:setupTileset(filename)
   self.tileSizeX = 32
   self.tileSizeY = 32
 
-  -- grass1
-  self.tileQuads[0] = love.graphics.newQuad(5 * self.tileSizeX, 17 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- grass2
-  self.tileQuads[2] = love.graphics.newQuad(5 * self.tileSizeX, 18 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- pebble
-  self.tileQuads[1] = love.graphics.newQuad(5 * self.tileSizeX, 19 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- flower1
-  self.tileQuads[3] = love.graphics.newQuad(6 * self.tileSizeX, 18 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- flower2
-  self.tileQuads[4] = love.graphics.newQuad(6 * self.tileSizeX, 19 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- stone
-  self.tileQuads[5] = love.graphics.newQuad(4 * self.tileSizeX, 18 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
-  -- stone2
-  self.tileQuads[6] = love.graphics.newQuad(4 * self.tileSizeX, 19 * self.tileSizeY,
-    self.tileSizeX, self.tileSizeY, tilesetImage:getWidth(), tilesetImage:getHeight())
+
+  function getQuadAt(tileX, tileY)
+    return love.graphics.newQuad(tileX * self.tileWidth, tileY * self.tileHeight,
+                                 self.tileWidth, self.tileHeight,
+                                 tilesetImage:getWidth(), tilesetImage:getHeight())
+  end
+
+  self.tileQuads[0] = getQuadAt(5, 17) -- grass1
+  self.tileQuads[2] = getQuadAt(5, 18) -- grass2
+  self.tileQuads[1] = getQuadAt(5, 19) -- pebble
+  self.tileQuads[3] = getQuadAt(6, 18) -- flower1
+  self.tileQuads[4] = getQuadAt(6, 19) -- flower2
+  self.tileQuads[5] = getQuadAt(4, 18) -- stone
+  self.tileQuads[6] = getQuadAt(4, 19) -- stone2
 
   self.tilesetBatch = love.graphics.newSpriteBatch(tilesetImage,
     self.tilesDisplayWidth * self.tilesDisplayHeight)
