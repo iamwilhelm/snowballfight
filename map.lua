@@ -89,6 +89,11 @@ function Map:move(dt)
   self.viewTileY = math.limit(self.viewTileY + dy, 1,
                               self.mapTileHeight - self.viewTileHeight)
 
+  -- round to the nearest 1 / tileWidth to get rid of visual artifacts
+  self.viewTileX = math.floor(self.viewTileX * self.tileWidth) / self.tileWidth
+  self.viewTileY = math.floor(self.viewTileY * self.tileHeight) / self.tileHeight
+  print(self.viewTileX, self.viewTileY)
+
   if math.floor(self.viewTileX) ~= math.floor(oldViewTileX) or
      math.floor(self.viewTileX) ~= math.floor(oldViewTileY) then
     self:update(dt)
@@ -122,8 +127,6 @@ function Map:thinkold(dt)
   if love.keyboard.isDown("right")  then
     self:move(0.2 * self.tileWidth * dt, 0)
   end
-end
-
 end
 
 
