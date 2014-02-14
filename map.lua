@@ -23,12 +23,13 @@ function Map:init(mapWidth, mapHeight)
   self.tileQuads = {}
 
   -- number of tiles to display
-  self.viewTileWidth = math.floor(800 / self.tileWidth) + 1
-  self.viewTileHeight = math.floor(600 / self.tileHeight) + 1
+  screenWidth, screenHeight = love.window.getDimensions()
+  self.viewTileWidth = math.floor(screenWidth / self.tileWidth) + 2
+  self.viewTileHeight = math.floor(screenHeight / self.tileHeight) + 2
 
   -- viewport
-  self.viewportX = 0
-  self.viewportY = 0
+  self.viewTileX = 1
+  self.viewTileY = 1
   self.zoomX = 1
   self.zoomY = 1
 end
@@ -37,8 +38,8 @@ function Map:setupTileset(filename)
   tilesetImage = love.graphics.newImage(filename)
   tilesetImage:setFilter("nearest", "linear")
 
-  function getQuadAt(viewportX, viewportY)
-    return love.graphics.newQuad(viewportX * self.tileWidth, viewportY * self.tileHeight,
+  function getQuadAt(tileX, tileY)
+    return love.graphics.newQuad(tileX * self.tileWidth, tileY * self.tileHeight,
                                  self.tileWidth, self.tileHeight,
                                  tilesetImage:getWidth(), tilesetImage:getHeight())
   end
@@ -57,33 +58,35 @@ function Map:setupTileset(filename)
   self:update(0)
 end
 
-function Map:draw()
-  love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(
-    self.tilesetBatch,
-    math.floor(-self.zoomX * (self.viewportX % 1) * self.tileWidth),
-    math.floor(-self.zoomY * (self.viewportY % 1) * self.tileHeight),
-    0,
-    self.zoomX,
-    self.zoomY
-  )
-end
-
 function Map:update(dt)
   self.tilesetBatch:clear()
-  for tileX = 1, self.viewTileWidth do
-    for tileY = 1, self.viewTileHeight do
-      local quad = self:tileQuadAt(tileX + math.floor(self.viewportX),
-                                   tileY + math.floor(self.viewportY))
-      local mapX = (tileX - 1) * self.tileWidth
-      local mapY = (tileY - 1) * self.tileHeight
+
+  local beginTileX = Entity.limit(math.floor(camera:left() / self.tileWidth),
+                                  0, self.mapWidth)
+  local beginTileY = Entity.limit(math.floor(camera:top() / self.tileHeight),
+                                  0, self.mapHeight)
+
+  for tileX = 0, self.viewTileWidth - 1 do
+    for tileY = 0, self.viewTileHeight - 1 do
+      local quad = self:tileQuadAt(beginTileX + tileX, beginTileY + tileY)
+      local mapX = tileX * self.tileWidth
+      local mapY = tileY * self.tileHeight
       self.tilesetBatch:add(quad, mapX, mapY)
     end
   end
 end
 
+function Map:draw()
+  love.graphics.setColor(255, 255, 255, 255)
+  love.graphics.draw(
+    self.tilesetBatch,
+    math.floor(-camera:left() % self.tileWidth) - self.tileWidth,
+    math.floor(-camera:top() % self.tileHeight) - self.tileHeight
+  )
+end
+
 function Map:tileQuadAt(tileX, tileY)
-  local tiletype = self.map[tileX][tileY]
+  local tiletype = self.map[tileX + 1][tileY + 1]
   return self.tileQuads[tiletype]
 end
 
@@ -103,15 +106,16 @@ function Map:think(dt)
 end
 
 function Map:move(dx, dy, dt)
-  oldTileDisplayX = self.viewportX
-  oldTileDisplayY = self.viewportY
+  oldTileDisplayX = self.viewTileX
+  oldTileDisplayY = self.viewTileY
 
-  self.viewportX = math.max(math.min(self.viewportX + dx,
+  self.viewTileX = math.max(math.min(self.viewTileX + dx,
                                      self.mapWidth - self.viewTileWidth), 1)
-  self.viewportY = math.max(math.min(self.viewportY + dy,
+  self.viewTileY = math.max(math.min(self.viewTileY + dy,
                                      self.mapHeight - self.viewTileHeight), 1)
 
-  if math.floor(self.viewportX) ~= math.floor(oldTileDisplayX) or math.floor(self.viewportX) ~= math.floor(oldTileDisplayY) then
+  if math.floor(self.viewTileX) ~= math.floor(oldTileDisplayX) or
+     math.floor(self.viewTileX) ~= math.floor(oldTileDisplayY) then
     self:update(dt)
   end
 end

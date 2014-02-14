@@ -7,14 +7,24 @@ print(Entity)
 
 -- class methods
 
-function Entity.limit(num, cap)
-  if num > cap then
-    return cap
+function Entity.limit(num, cap, cap2)
+  if cap2 == nil then
+    if num > cap then
+      return cap
+    end
+    if num < -cap then
+      return -cap
+    end
+    return num
+  else
+    if num > cap2 then
+      return cap2
+    end
+    if num < cap then
+      return cap
+    end
+    return num
   end
-  if num < -cap then
-    return -cap
-  end
-  return num
 end
 
 -- instance methods

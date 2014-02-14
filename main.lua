@@ -12,6 +12,9 @@ function love.load()
   rand = love.math.newRandomGenerator()
   rand:setSeed(os.time())
 
+  -- initialize camera to center of screen
+  camera = Camera:new()
+
   -- initialize world objects
 
   world = World:new()
@@ -29,26 +32,6 @@ function love.load()
   map = Map:new(60, 40)
   map:setupTileset("assets/tileset.png")
 
-  -- initialize camera
-
-  camera = Camera:new(0, 0)
-end
-
-function love.draw()
-  -- draw the map
-  map:draw()
-
-  camera:set()
-
-  -- the order to be drawn should be sorted according to z-order
-  world:sortByY()
-
-  -- draw entities
-  world:each(function (entity, i)
-    entity:draw()
-  end)
-
-  camera:unset()
 end
 
 function love.update(dt)
@@ -87,9 +70,28 @@ function love.update(dt)
   camera:update(dt)
   camera:drag(0.05, dt)
 
-  map:think(dt)
+  -- map:think(dt)
+  map:update(dt)
 
   -- check for win or lose
+end
+
+function love.draw()
+
+  -- draw the map
+  map:draw()
+
+  camera:set()
+
+  -- the order to be drawn should be sorted according to z-order
+  world:sortByY()
+
+  -- draw entities
+  world:each(function (entity, i)
+    entity:draw()
+  end)
+
+  camera:unset()
 end
 
 function love.keypressed(key, unicode)
