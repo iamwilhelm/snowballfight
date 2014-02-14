@@ -62,7 +62,7 @@ function love.update(dt)
     entity:think(dt)
   end)
   camera:think(dt)
-  -- map:think(dt)
+  map:think(dt)
 
   -------------- move entities -------------
 

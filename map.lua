@@ -80,19 +80,13 @@ end
 function Map:move(dt)
   local oldViewTileX = self.viewTileX
   local oldViewTileY = self.viewTileY
-  local dx = camera.vx / self.tileWidth * dt
-  local dy = camera.vy / self.tileHeight * dt
-  -- print(dx, dy)
 
-  self.viewTileX = math.limit(self.viewTileX + dx, 1,
+  self.vx = camera.vx / self.tileWidth
+  self.vy = camera.vy / self.tileHeight
+  self.viewTileX = math.limit(self.viewTileX + self.vx * dt, 1,
                               self.mapTileWidth - self.viewTileWidth)
-  self.viewTileY = math.limit(self.viewTileY + dy, 1,
+  self.viewTileY = math.limit(self.viewTileY + self.vy * dt, 1,
                               self.mapTileHeight - self.viewTileHeight)
-
-  -- round to the nearest 1 / tileWidth to get rid of visual artifacts
-  self.viewTileX = math.floor(self.viewTileX * self.tileWidth) / self.tileWidth
-  self.viewTileY = math.floor(self.viewTileY * self.tileHeight) / self.tileHeight
-  print(self.viewTileX, self.viewTileY)
 
   if math.floor(self.viewTileX) ~= math.floor(oldViewTileX) or
      math.floor(self.viewTileX) ~= math.floor(oldViewTileY) then
@@ -101,11 +95,17 @@ function Map:move(dt)
 end
 
 function Map:draw()
+  -- round to the nearest 1 / tileWidth to get rid of visual artifacts
+  roundedTileX = math.floor(self.viewTileX * self.tileWidth) / self.tileWidth
+  roundedTileY = math.floor(self.viewTileY * self.tileHeight) / self.tileHeight
+  --roundedTileX = self.viewTileX
+  --roundedTileY = self.viewTileY
+
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(
     self.tilesetBatch,
-    -self.zoomX * (self.viewTileX % 1) * self.tileWidth,
-    -self.zoomY * (self.viewTileY % 1) * self.tileHeight
+    -self.zoomX * (roundedTileX % 1) * self.tileWidth,
+    -self.zoomY * (roundedTileY % 1) * self.tileHeight
   )
 end
 
