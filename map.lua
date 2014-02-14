@@ -5,20 +5,20 @@ Map = class:new()
 print("Map")
 print(Map)
 
-function Map:init(mapWidth, mapHeight)
-  self.mapWidth = mapWidth
-  self.mapHeight = mapHeight
+function Map:init(mapTileWidth, mapTileHeight)
+  self.mapTileWidth = mapTileWidth
+  self.mapTileHeight = mapTileHeight
   self.tileWidth = 32
   self.tileHeight = 32
 
   self.map = {}
-  for x = 1, self.mapWidth do
+  for x = 1, self.mapTileWidth do
     self.map[x] = {}
-    for y = 1, self.mapHeight do
+    for y = 1, self.mapTileHeight do
       self.map[x][y] = math.random(0, 3)
     end
   end
-  self.map[1][1] = 5
+  self.map[2][2] = 5
 
   self.tileQuads = {}
 
@@ -61,10 +61,8 @@ end
 function Map:update(dt)
   self.tilesetBatch:clear()
 
-  local beginTileX = Entity.limit(math.floor(camera:left() / self.tileWidth),
-                                  0, self.mapWidth)
-  local beginTileY = Entity.limit(math.floor(camera:top() / self.tileHeight),
-                                  0, self.mapHeight)
+  local beginTileX = math.floor(self.viewTileX)
+  local beginTileY = math.floor(self.viewTileY)
 
   for tileX = 0, self.viewTileWidth - 1 do
     for tileY = 0, self.viewTileHeight - 1 do
@@ -78,12 +76,31 @@ end
 
 function Map:think(dt)
 end
+
+function Map:move(dt)
+  local oldViewTileX = self.viewTileX
+  local oldViewTileY = self.viewTileY
+  local dx = camera.vx / self.tileWidth * dt
+  local dy = camera.vy / self.tileHeight * dt
+  -- print(dx, dy)
+
+  self.viewTileX = math.limit(self.viewTileX + dx, 1,
+                              self.mapTileWidth - self.viewTileWidth)
+  self.viewTileY = math.limit(self.viewTileY + dy, 1,
+                              self.mapTileHeight - self.viewTileHeight)
+
+  if math.floor(self.viewTileX) ~= math.floor(oldViewTileX) or
+     math.floor(self.viewTileX) ~= math.floor(oldViewTileY) then
+    self:update(dt)
+  end
+end
+
 function Map:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(
     self.tilesetBatch,
-    math.floor(-camera:left() % self.tileWidth) - self.tileWidth,
-    math.floor(-camera:top() % self.tileHeight) - self.tileHeight
+    -self.zoomX * (self.viewTileX % 1) * self.tileWidth,
+    -self.zoomY * (self.viewTileY % 1) * self.tileHeight
   )
 end
 
@@ -92,7 +109,7 @@ function Map:tileQuadAt(tileX, tileY)
   return self.tileQuads[tiletype]
 end
 
-function Map:think(dt)
+function Map:thinkold(dt)
   if love.keyboard.isDown("up")  then
     self:move(0, -0.2 * self.tileHeight * dt)
   end
@@ -107,19 +124,6 @@ function Map:think(dt)
   end
 end
 
-function Map:move(dx, dy, dt)
-  oldTileDisplayX = self.viewTileX
-  oldTileDisplayY = self.viewTileY
-
-  self.viewTileX = math.max(math.min(self.viewTileX + dx,
-                                     self.mapWidth - self.viewTileWidth), 1)
-  self.viewTileY = math.max(math.min(self.viewTileY + dy,
-                                     self.mapHeight - self.viewTileHeight), 1)
-
-  if math.floor(self.viewTileX) ~= math.floor(oldTileDisplayX) or
-     math.floor(self.viewTileX) ~= math.floor(oldTileDisplayY) then
-    self:update(dt)
-  end
 end
 
 
