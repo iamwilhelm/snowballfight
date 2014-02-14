@@ -54,6 +54,8 @@ function love.update(dt)
       entity:drag(0.05, dt)
     end
   end)
+  camera:drag(0.1, dt)
+
 
   -------------- move entities -------------
 

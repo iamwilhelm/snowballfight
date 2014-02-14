@@ -16,6 +16,9 @@ function Camera:init(x, y)
     self.scaleX = 1
     self.scaleY = 1
     self.rotation = 0
+
+    self:setMaxVelocity(750)
+    self:setMaxAccel(2000)
   end
 end
 
