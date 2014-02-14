@@ -81,7 +81,6 @@ function love.update(dt)
 end
 
 function love.draw()
-
   -- draw the map
   map:draw()
 
