@@ -76,6 +76,8 @@ function Map:update(dt)
   end
 end
 
+function Map:think(dt)
+end
 function Map:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(

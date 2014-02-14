@@ -56,24 +56,26 @@ function love.update(dt)
   end)
   camera:drag(0.1, dt)
 
+  -------------- entities think -------------
+
+  world:each(function(entity, i)
+    entity:think(dt)
+  end)
+  camera:think(dt)
+  -- map:think(dt)
 
   -------------- move entities -------------
 
-  -- update all entities. Includes thinking and moving
-  -- TODO thinking and moving should be separate. Not all entities need to think
-  -- on every cycle.
   world:each(function(entity, i)
-    entity:update(dt)
+    entity:move(dt)
   end)
+  camera:move(dt)
+  map:move(dt)
+
+  -------------- bookkeeping ---------------
 
   world:removeOutOfView()
   world:removeMarkedForDeletion()
-
-  camera:update(dt)
-  camera:drag(0.05, dt)
-
-  -- map:think(dt)
-  map:update(dt)
 
   -- check for win or lose
 end
