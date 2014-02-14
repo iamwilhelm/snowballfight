@@ -1,31 +1,10 @@
 require('class')
+require('ext/math')
 
 Entity = class:new()
 
 print("Entity")
 print(Entity)
-
--- class methods
-
-function Entity.limit(num, cap, cap2)
-  if cap2 == nil then
-    if num > cap then
-      return cap
-    end
-    if num < -cap then
-      return -cap
-    end
-    return num
-  else
-    if num > cap2 then
-      return cap2
-    end
-    if num < cap then
-      return cap
-    end
-    return num
-  end
-end
 
 -- instance methods
 
@@ -76,10 +55,10 @@ function Entity:think(dt)
 end
 
 function Entity:move(dt)
-  self.vx = Entity.limit(self.vx + self.ax * dt, self.v_max)
+  self.vx = math.limit(self.vx + self.ax * dt, self.v_max)
   self.x = self.x + self.vx * dt
 
-  self.vy = Entity.limit(self.vy + self.ay * dt, self.v_max)
+  self.vy = math.limit(self.vy + self.ay * dt, self.v_max)
   self.y = self.y + self.vy * dt
 end
 
