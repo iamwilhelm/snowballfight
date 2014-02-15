@@ -23,9 +23,9 @@ function Map:init(mapTileWidth, mapTileHeight)
   self.tileQuads = {}
 
   -- number of tiles to display
-  screenWidth, screenHeight = love.window.getDimensions()
-  self.viewTileWidth = math.floor(screenWidth / self.tileWidth) + 2
-  self.viewTileHeight = math.floor(screenHeight / self.tileHeight) + 2
+  self.screenWidth, self.screenHeight = love.window.getDimensions()
+  self.viewTileWidth = math.floor(self.screenWidth / self.tileWidth) + 2
+  self.viewTileHeight = math.floor(self.screenHeight / self.tileHeight) + 2
 
   -- viewport
   self.viewTileX = 1
@@ -98,8 +98,6 @@ function Map:draw()
   -- round to the nearest 1 / tileWidth to get rid of visual artifacts
   roundedTileX = math.floor(self.viewTileX * self.tileWidth) / self.tileWidth
   roundedTileY = math.floor(self.viewTileY * self.tileHeight) / self.tileHeight
-  --roundedTileX = self.viewTileX
-  --roundedTileY = self.viewTileY
 
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(
@@ -129,4 +127,26 @@ function Map:thinkold(dt)
   end
 end
 
+function Map:left()
+  return 0
+end
 
+function Map:right()
+  return (self.mapTileWidth - 3) * map.tileWidth
+end
+
+function Map:top()
+  return 0
+end
+
+function Map:bottom()
+  return (self.mapTileHeight - 2) * map.tileHeight - 7
+end
+
+function Map:viewportWidth()
+  return self.screenWidth / self.zoomX
+end
+
+function Map:viewportHeight()
+  return self.screenHeight / self.zoomY
+end

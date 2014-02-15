@@ -59,18 +59,16 @@ end
 -- NOTE: we subtract out two tiles in the camera limit, because the map has a
 -- perimeter of tiles all around it.
 function Camera:move(dt)
-
+  -- TODO global access to map
   self.vx = math.limit(self.vx + self.ax * dt, self.v_max)
   self.x = math.limit(self.x + self.vx * dt,
-                      0 + 800 / 2,
-                      (map.mapTileWidth - 3) * map.tileWidth - 800 / 2)
+                      map:left() + map:viewportWidth() / 2,
+                      map:right() - map:viewportWidth() / 2)
 
   self.vy = math.limit(self.vy + self.ay * dt, self.v_max)
   self.y = math.limit(self.y + self.vy * dt,
-                      0 + 600 / 2,
-                      (map.mapTileHeight - 2) * map.tileHeight - 600 / 2)
-
-  print(self.x, self.y)
+                      map:top() + map:viewportHeight() / 2,
+                      map:bottom() - map:viewportHeight() / 2)
 end
 
 function Camera:drag(friction, dt)
