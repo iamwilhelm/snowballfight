@@ -27,8 +27,3 @@ function Bullet:draw()
     self.width, self.height)
 end
 
-function Bullet:update(dt)
-  self:think(dt)
-  self:move(dt)
-end
-

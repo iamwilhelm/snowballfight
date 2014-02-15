@@ -30,11 +30,6 @@ end
 
 -- hero update actions
 
-function Hero:update(dt)
-  self:think(dt)
-  self:move(dt)
-end
-
 function Hero:think(dt)
   if love.keyboard.isDown("a") then
     hero:moveLeft(dt)

@@ -26,11 +26,6 @@ function Enemy:draw()
     self.width, self.height)
 end
 
-function Enemy:update(dt)
-  self:think(dt)
-  self:move(dt)
-end
-
 function Enemy:think(dt)
   if rand:random() > 0.9 then
     if rand:random() > 0.5 then

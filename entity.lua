@@ -50,6 +50,11 @@ function Entity:setMaxAccel(max)
   self.a_max = max
 end
 
+function Entity:update(dt)
+  self:think(dt)
+  self:move(dt)
+end
+
 function Entity:think(dt)
   -- no thinking by default
 end

@@ -34,11 +34,6 @@ function Camera:unset()
   love.graphics.pop()
 end
 
-function Camera:update(dt)
-  self:think(dt)
-  self:move(dt)
-end
-
 function Camera:think(dt)
   if love.keyboard.isDown("left") then
     self.ax = -self.a_max
