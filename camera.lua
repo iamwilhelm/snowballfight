@@ -34,6 +34,10 @@ function Camera:unset()
   love.graphics.pop()
 end
 
+function Camera:map(map)
+  self.map = map
+end
+
 function Camera:think(dt)
   if love.keyboard.isDown("left") then
     self.ax = -self.a_max
@@ -57,13 +61,13 @@ function Camera:move(dt)
   -- TODO global access to map
   self.vx = math.limit(self.vx + self.ax * dt, self.v_max)
   self.x = math.limit(self.x + self.vx * dt,
-                      map:left() + map:viewportWidth() / 2,
-                      map:right() - map:viewportWidth() / 2)
+                      self.map:left() + self.map:viewportWidth() / 2,
+                      self.map:right() - self.map:viewportWidth() / 2)
 
   self.vy = math.limit(self.vy + self.ay * dt, self.v_max)
   self.y = math.limit(self.y + self.vy * dt,
-                      map:top() + map:viewportHeight() / 2,
-                      map:bottom() - map:viewportHeight() / 2)
+                      self.map:top() + self.map:viewportHeight() / 2,
+                      self.map:bottom() - self.map:viewportHeight() / 2)
 end
 
 function Camera:drag(friction, dt)

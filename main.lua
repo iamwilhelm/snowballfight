@@ -12,8 +12,15 @@ function love.load()
   rand = love.math.newRandomGenerator()
   rand:setSeed(os.time())
 
+  -- initialize map and tiles
+
+  map = Map:new(60, 40)
+  map:setupTileset("assets/tileset.png")
+
   -- initialize camera to center of screen
   camera = Camera:new()
+  camera:map(map)
+  map:track(camera)
 
   -- initialize world objects
 
@@ -25,12 +32,6 @@ function love.load()
     local enemy = Enemy:new(i * 100 + 100, 300)
     world:add(enemy)
   end
-
-  -- initialize map and tiles
-
-  image = love.graphics.newImage("assets/secretofmana.png")
-  map = Map:new(60, 40)
-  map:setupTileset("assets/tileset.png")
 
 end
 
@@ -62,7 +63,6 @@ function love.update(dt)
     entity:think(dt)
   end)
   camera:think(dt)
-  map:think(dt)
 
   -------------- move entities -------------
 

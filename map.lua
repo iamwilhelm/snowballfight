@@ -74,6 +74,10 @@ function Map:update(dt)
   end
 end
 
+function Map:track(entity)
+  self.trackEntity = entity
+end
+
 function Map:think(dt)
 end
 
@@ -81,8 +85,8 @@ function Map:move(dt)
   local oldViewTileX = self.viewTileX
   local oldViewTileY = self.viewTileY
 
-  self.vx = camera.vx / self.tileWidth
-  self.vy = camera.vy / self.tileHeight
+  self.vx = self.trackEntity.vx / self.tileWidth
+  self.vy = self.trackEntity.vy / self.tileHeight
   self.viewTileX = math.limit(self.viewTileX + self.vx * dt, 1,
                               self.mapTileWidth - self.viewTileWidth)
   self.viewTileY = math.limit(self.viewTileY + self.vy * dt, 1,
