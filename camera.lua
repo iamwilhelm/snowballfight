@@ -19,6 +19,8 @@ function Camera:init(x, y)
 
     self:setMaxVelocity(750)
     self:setMaxAccel(2000)
+
+    self.isTracking = true
   end
 end
 
@@ -42,8 +44,12 @@ function Camera:track(entity)
   self.trackEntity = entity
 end
 
+function Camera:toggleTracking()
+  self.isTracking = not self.isTracking
+end
+
 function Camera:think(dt)
-  if self.trackEntity == nil then
+  if self.isTracking == false then
     if love.keyboard.isDown("left") then
       self.ax = -self.a_max
     elseif love.keyboard.isDown("right") then
@@ -59,12 +65,14 @@ function Camera:think(dt)
       self.ay = 0
     end
   else
-    local fudgefactor = 3
-    local dx = self.trackEntity.x - self.x
-    local dy = self.trackEntity.y - self.y
+    if self.trackEntity ~= nil then
+      local fudgefactor = 3
+      local dx = self.trackEntity.x - self.x
+      local dy = self.trackEntity.y - self.y
 
-    self.ax = fudgefactor * dx / self.screenWidth * self.a_max
-    self.ay = fudgefactor * dy / self.screenHeight * self.a_max
+      self.ax = fudgefactor * dx / self.screenWidth * self.a_max
+      self.ay = fudgefactor * dy / self.screenHeight * self.a_max
+    end
   end
 end
 

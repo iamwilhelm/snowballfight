@@ -107,6 +107,12 @@ function love.keyreleased(key)
   if (key == " ") then
     hero:shoot()
   end
+
+  if (key == "t") then
+    camera:toggleTracking()
+  end
+
+
 end
 
 
