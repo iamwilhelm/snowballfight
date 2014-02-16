@@ -23,8 +23,9 @@ end
 function Bullet:impulse(dt)
   local ax = self.moveForce / self.mass * math.cos(self.rot)
   local ay = self.moveForce / self.mass * math.sin(self.rot)
-  self.vx = self.vx + ax * dt
-  self.vy = self.vy + ay * dt
+  local fudgeDt = 0.02
+  self.vx = self.vx + ax * fudgeDt
+  self.vy = self.vy + ay * fudgeDt
 end
 
 function Bullet:draw()
