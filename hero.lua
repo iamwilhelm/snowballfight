@@ -13,8 +13,8 @@ function Hero:init(x, y)
     self:setPosition(x, y)
     self:setDimension(32, 40)
 
-    self:setMaxVelocity(75)
-    self:setMaxAccel(400)
+    self:setMaxVelocity(90)
+    self:setMaxAccel(500)
 
     self.intent = nil
   end
