@@ -17,11 +17,6 @@ function love.load()
   map = Map:new(60, 40)
   map:setupTileset("assets/tileset.png")
 
-  -- initialize camera to center of screen
-  camera = Camera:new()
-  camera:map(map)
-  map:track(camera)
-
   -- initialize world objects
 
   world = World:new()
@@ -33,6 +28,11 @@ function love.load()
     world:add(enemy)
   end
 
+  -- initialize camera to center of screen
+  camera = Camera:new()
+  map:track(camera)
+  camera:map(map)
+  camera:track(hero)
 end
 
 function love.update(dt)

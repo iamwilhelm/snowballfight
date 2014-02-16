@@ -38,20 +38,33 @@ function Camera:map(map)
   self.map = map
 end
 
+function Camera:track(entity)
+  self.trackEntity = entity
+end
+
 function Camera:think(dt)
-  if love.keyboard.isDown("left") then
-    self.ax = -self.a_max
-  elseif love.keyboard.isDown("right") then
-    self.ax = self.a_max
+  if self.trackEntity == nil then
+    if love.keyboard.isDown("left") then
+      self.ax = -self.a_max
+    elseif love.keyboard.isDown("right") then
+      self.ax = self.a_max
+    else
+      self.ax = 0
+    end
+    if love.keyboard.isDown("up") then
+      self.ay = -self.a_max
+    elseif love.keyboard.isDown("down") then
+      self.ay = self.a_max
+    else
+      self.ay = 0
+    end
   else
-    self.ax = 0
-  end
-  if love.keyboard.isDown("up") then
-    self.ay = -self.a_max
-  elseif love.keyboard.isDown("down") then
-    self.ay = self.a_max
-  else
-    self.ay = 0
+    local fudgefactor = 3
+    local dx = self.trackEntity.x - self.x
+    local dy = self.trackEntity.y - self.y
+
+    self.ax = fudgefactor * dx / self.screenWidth * self.a_max
+    self.ay = fudgefactor * dy / self.screenHeight * self.a_max
   end
 end
 
