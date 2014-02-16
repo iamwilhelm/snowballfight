@@ -116,17 +116,19 @@ function love.keypressed(key, unicode)
 end
 
 function love.keyreleased(key)
-  if (key == " ") then
-    hero:shoot()
-  end
-
   if (key == "t") then
     camera:toggleTracking()
   end
-
-
 end
 
+function love.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+  if button == "l" then
+    hero:shoot()
+  end
+end
 
 function love.quit()
   print("Thanks for playing!")

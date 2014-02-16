@@ -60,7 +60,6 @@ function World:removeOutOfView()
   self:each_projectile(function(bullet, i)
     if map:isOutside(bullet) then
       self:remove(i)
-      print("removed bullet")
     end
   end)
 end

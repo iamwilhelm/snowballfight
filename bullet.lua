@@ -5,14 +5,16 @@ Bullet = Entity:new("projectile")
 print("Bullet")
 print(Bullet)
 
-function Bullet:init(x, y)
+function Bullet:init(x, y, rot)
   self.__baseclass:init(x, y)
 
   if self ~= Bullet then
+    self:setDimension(20, 20)
     self:setPosition(x, y)
-    self:setVelocity(0, -300)
-    self:setDimension(5, 10)
-    self:setMaxVelocity(300)
+    self:setMaxVelocity(350)
+
+    self.vx = self.v_max * math.cos(rot)
+    self.vy = self.v_max * math.sin(rot)
 
     -- TODO global
     self.hero = hero
@@ -21,9 +23,6 @@ end
 
 function Bullet:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.rectangle("fill",
-    self.x - self.width / 2,
-    self.y - self.height / 2,
-    self.width, self.height)
+  love.graphics.circle("fill", self.x, self.y, self.width / 2)
 end
 

@@ -1,3 +1,4 @@
+require('./ext/math')
 require('entity')
 require('bullet')
 
@@ -76,8 +77,15 @@ function Hero:stopVertical(dt)
 end
 
 function Hero:shoot(dt)
-  local bullet = Bullet:new(self.x, self.y - self.height)
-  -- TODO global
+  local dx = eyesight.x - self.x
+  local dy = eyesight.y - self.y
+  local rot = math.atan2(dy, dx)
+  if math.sign(dx) == -1 then
+  end
+  local bullet = Bullet:new(self.x, self.y, rot)
+
+  -- TODO global access
+
   world:add(bullet)
 end
 
