@@ -116,18 +116,13 @@ function Map:tileQuadAt(tileX, tileY)
   return self.tileQuads[tiletype]
 end
 
-function Map:thinkold(dt)
-  if love.keyboard.isDown("up")  then
-    self:move(0, -0.2 * self.tileHeight * dt)
-  end
-  if love.keyboard.isDown("down")  then
-    self:move(0, 0.2 * self.tileHeight * dt)
-  end
-  if love.keyboard.isDown("left")  then
-    self:move(-0.2 * self.tileWidth * dt, 0)
-  end
-  if love.keyboard.isDown("right")  then
-    self:move(0.2 * self.tileWidth * dt, 0)
+function Map:isOutside(entity)
+  if entity.x < self:left() or entity.x > self:right() then
+    return true
+  elseif entity.y < self:top() or entity.y > self:bottom() then
+    return true
+  else
+    return false
   end
 end
 

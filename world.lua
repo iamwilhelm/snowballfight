@@ -55,11 +55,12 @@ function World:each_projectile(iter)
   end
 end
 
--- should know something about the field of view or bullet range from point of origin
+-- TODO global access to map
 function World:removeOutOfView()
   self:each_projectile(function(bullet, i)
-    if bullet.y < 0 then
+    if map:isOutside(bullet) then
       self:remove(i)
+      print("removed bullet")
     end
   end)
 end
