@@ -74,11 +74,11 @@ end
 -- entity state queries
 
 function Entity:left()
-  return self.x - self.height / 2
+  return self.x - self.width / 2
 end
 
 function Entity:right()
-  return self.x + self.height / 2
+  return self.x + self.width/ 2
 end
 
 function Entity:top()
