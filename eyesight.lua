@@ -23,7 +23,7 @@ function Eyesight:think(dt)
 end
 
 function Eyesight:draw()
-  love.graphics.setColor(255, 127, 127, 120)
+  love.graphics.setColor(255, 63, 0, 120)
   love.graphics.circle("fill", self.x, self.y, 8)
 end
 
