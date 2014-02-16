@@ -1,12 +1,13 @@
 require('physics')
 
+require('map')
 require('world')
 require('hero')
 require('bullet')
 require('enemy')
 
 require('camera')
-require('map')
+require('eyesight')
 
 function love.load()
   rand = love.math.newRandomGenerator()
@@ -21,18 +22,21 @@ function love.load()
 
   world = World:new()
 
-  hero = Hero:new(300, 400)
+  hero = Hero:new(400, 300)
   world:add(hero)
   for i = 0, 6 do
-    local enemy = Enemy:new(i * 100 + 100, 300)
+    local enemy = Enemy:new(i * 100 + 100, 200)
     world:add(enemy)
   end
 
   -- initialize camera to center of screen
   camera = Camera:new()
-  map:track(camera)
   camera:map(map)
+  map:track(camera)
   camera:track(hero)
+
+  -- interface objects
+  eyesight = Eyesight:new(camera)
 end
 
 function love.update(dt)
@@ -72,6 +76,10 @@ function love.update(dt)
   camera:move(dt)
   map:move(dt)
 
+  -------------- update interface elements
+
+  eyesight:think(dt)
+
   -------------- bookkeeping ---------------
 
   world:removeOutOfView()
@@ -94,7 +102,11 @@ function love.draw()
     entity:draw()
   end)
 
+  -- draw interface
+  eyesight:draw()
+
   camera:unset()
+
 end
 
 function love.keypressed(key, unicode)

@@ -96,6 +96,13 @@ function Camera:drag(friction, dt)
   self.vy = self.vy - friction * self.vy
 end
 
+function Camera:screen2WorldCoord(screenX, screenY)
+  local worldX = screenX + self:left() / self.scaleX
+  local worldY = screenY + self:top() / self.scaleY
+  return worldX, worldY
+end
+
+
 function Camera:left()
   return self.scaleX * (self.x - self.screenWidth / 2)
 end
