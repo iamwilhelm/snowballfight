@@ -17,8 +17,8 @@ function Camera:init(x, y)
     self.scaleY = 1
     self.rotation = 0
 
-    self:setMaxVelocity(750)
-    self:setMaxAccel(2000)
+    self.v_max = 750
+    self.a_max = 2000
 
     self.isTracking = true
   end

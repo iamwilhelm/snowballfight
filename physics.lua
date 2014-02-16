@@ -12,3 +12,4 @@ function physics.isOverlap(amin, amax, bmin, bmax)
   return (amax > bmin and amax < bmax) or (amin > bmin and amin < bmax)
     or (bmin > amin and bmin < amax)
 end
+

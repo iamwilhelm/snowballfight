@@ -37,6 +37,8 @@ function love.load()
 
   -- interface objects
   eyesight = Eyesight:new(camera)
+
+  isOverlap = false
 end
 
 function love.update(dt)
@@ -56,7 +58,7 @@ function love.update(dt)
   -- friction on the ground
   world:each_actor(function(entity, i)
     if entity.drag then
-      entity:drag(0.05, dt)
+      entity:drag(0.025, dt)
     end
   end)
   camera:drag(0.1, dt)
@@ -80,12 +82,23 @@ function love.update(dt)
 
   eyesight:think(dt)
 
+  if hero.toShoot == true then
+    hero:shoot(dt)
+    hero.toShoot = false
+  end
+
   -------------- bookkeeping ---------------
 
   world:removeOutOfView()
   world:removeMarkedForDeletion()
 
   -- check for win or lose
+
+  if physics.isCollide(eyesight, hero) then
+    isOverlap = true
+  else
+    isOverlap = false
+  end
 end
 
 function love.draw()
@@ -107,6 +120,9 @@ function love.draw()
 
   camera:unset()
 
+  if isOverlap == true then
+    love.graphics.print("overlap", 10, 10)
+  end
 end
 
 function love.keypressed(key, unicode)
@@ -125,9 +141,7 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
-  if button == "l" then
-    hero:shoot()
-  end
+  hero.toShoot = true
 end
 
 function love.quit()

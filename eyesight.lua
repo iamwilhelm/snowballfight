@@ -13,6 +13,7 @@ function Eyesight:init(camera)
 
   if self ~= Camera then
     self:setPosition(x, y)
+    self:setDimension(16, 16)
     self.camera = camera
   end
 end

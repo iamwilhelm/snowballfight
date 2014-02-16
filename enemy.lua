@@ -12,9 +12,8 @@ function Enemy:init(x, y)
   if self ~= Enemy then
     self:setPosition(x, y)
     self:setDimension(32, 40)
-
-    self:setMaxVelocity(20)
-    self:setMaxAccel(1000)
+    self:setMoveForce(7500)
+    self:setMass(50)
   end
 end
 
@@ -27,25 +26,23 @@ function Enemy:draw()
 end
 
 function Enemy:think(dt)
-  if rand:random() > 0.9 then
+  if rand:random() > 0.95 then
     if rand:random() > 0.5 then
-      self.vx = self.v_max
+      self.ax = self.moveForce / self.mass
     else
-      self.vx = -self.v_max
+      self.ax = -self.moveForce / self.mass
     end
   end
-  if rand:random() > 0.9 then
+  if rand:random() > 0.95 then
     if rand:random() > 0.5 then
-      self.vy = self.v_max
+      self.ay = self.moveForce / self.mass
     else
-      self.vy = -self.v_max
+      self.ay = -self.moveForce / self.mass
     end
   end
 end
 
-function Enemy:move(dt)
-  self.x = self.x + self.vx * dt
-  self.y = self.y + self.vy * dt
+function Enemy:drag(friction, dt)
+  self.vx = self.vx - friction * self.vx
+  self.vy = self.vy - friction * self.vy
 end
-
-

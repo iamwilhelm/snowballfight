@@ -18,8 +18,8 @@ function Entity:init(typename)
   self:setVelocity(0, 0)
   self:setAccel(0, 0)
 
-  self:setMaxVelocity(200)
-  self:setMaxAccel(400)
+  self:setMoveForce(5000)
+  self:setMass(10)
 end
 
 function Entity:setDimension(w, h)
@@ -42,12 +42,12 @@ function Entity:setAccel(ax, ay)
   self.ay = ay
 end
 
-function Entity:setMaxVelocity(max)
-  self.v_max = max
+function Entity:setMoveForce(force)
+  self.moveForce = force
 end
 
-function Entity:setMaxAccel(max)
-  self.a_max = max
+function Entity:setMass(mass)
+  self.mass = mass
 end
 
 function Entity:update(dt)
@@ -60,10 +60,10 @@ function Entity:think(dt)
 end
 
 function Entity:move(dt)
-  self.vx = math.limit(self.vx + self.ax * dt, self.v_max)
+  self.vx = self.vx + self.ax * dt
   self.x = self.x + self.vx * dt
 
-  self.vy = math.limit(self.vy + self.ay * dt, self.v_max)
+  self.vy = self.vy + self.ay * dt
   self.y = self.y + self.vy * dt
 end
 
