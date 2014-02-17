@@ -40,10 +40,8 @@ function love.load()
 
   -- load audio files
   sounds = {}
-  sounds.thud = love.audio.newSource("assets/thud.mp3")
 
   -- misc
-
   isOverlap = false
 end
 

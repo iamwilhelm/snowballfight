@@ -7,6 +7,9 @@ Hero = Entity:new("friendly")
 print("Hero")
 print(Hero)
 
+Hero.sounds = {}
+Hero.sounds.throw = love.audio.newSource("assets/sounds/snow_throw.mp3")
+
 function Hero:init(x, y)
   self.__baseclass:init()
 
@@ -88,8 +91,10 @@ function Hero:shoot(dt)
   bullet:impulse(dt)
 
   -- TODO global access
-
   world:add(bullet)
+
+  -- play sound (should be in a before filter
+  love.audio.play(Hero.sounds.throw)
 end
 
 -- draggable

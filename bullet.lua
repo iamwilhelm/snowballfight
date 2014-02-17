@@ -5,6 +5,9 @@ Bullet = Entity:new("projectile")
 print("Bullet")
 print(Bullet)
 
+Bullet.sounds = {}
+Bullet.sounds.splat = love.audio.newSource("assets/sounds/snow_splat.mp3")
+
 function Bullet:init(x, y, rot)
   self.__baseclass:init(x, y)
 
@@ -34,7 +37,7 @@ end
 -- TODO use global sound
 function Bullet:hitTarget()
   self:markForDeletion()
-  love.audio.play(sounds.thud)
+  love.audio.play(Bullet.sounds.splat)
 end
 
 function Bullet:draw()
