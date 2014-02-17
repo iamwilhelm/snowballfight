@@ -126,6 +126,18 @@ function Map:isOutside(entity)
   end
 end
 
+function Map:putInside(entity)
+  if entity.x < self:left() then
+    entity.x = map:left()
+  elseif entity.x > self:right() then
+    entity.x = map:right()
+  elseif entity.y < self:top() then
+    entity.y = map:top()
+  elseif entity.y > self:bottom() then
+    entity.y = map:bottom()
+  end
+end
+
 function Map:left()
   return 0
 end

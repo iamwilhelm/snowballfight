@@ -85,6 +85,10 @@ function love.update(dt)
   camera:move(dt)
   map:move(dt)
 
+  world:each_actor(function(entity, i)
+    map:putInside(entity)
+  end)
+
   -------------- update interface elements
 
   eyesight:think(dt)
