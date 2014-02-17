@@ -38,6 +38,12 @@ function love.load()
   -- interface objects
   eyesight = Eyesight:new(camera)
 
+  -- load audio files
+  sounds = {}
+  sounds.thud = love.audio.newSource("assets/thud.mp3")
+
+  -- misc
+
   isOverlap = false
 end
 
@@ -50,8 +56,9 @@ function love.update(dt)
     world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet, enemy) then
         -- enemy:markForDeletion()
-        physics.transferMomentum(bullet, enemy, 0.15)
-        bullet:markForDeletion()
+        bullet:hitTarget()
+        enemy:stun()
+        physics.transferMomentum(bullet, enemy, 1)
       end
     end)
   end)

@@ -31,6 +31,12 @@ function Bullet:impulse(dt)
   self.vy = self.vy + ay * fudgeDt
 end
 
+-- TODO use global sound
+function Bullet:hitTarget()
+  self:markForDeletion()
+  love.audio.play(sounds.thud)
+end
+
 function Bullet:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.circle("fill", self.x, self.y, self.width / 2)
