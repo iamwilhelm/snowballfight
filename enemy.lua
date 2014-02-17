@@ -12,8 +12,8 @@ function Enemy:init(x, y)
   if self ~= Enemy then
     self:setPosition(x, y)
     self:setDimension(32, 40)
-    self:setMoveForce(7500)
-    self:setMass(50)
+    self:setMoveForce(2000)
+    self:setMass(10)
   end
 end
 

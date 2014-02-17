@@ -13,8 +13,8 @@ function Hero:init(x, y)
   if self ~= Hero then
     self:setPosition(x, y)
     self:setDimension(32, 40)
-    self:setMoveForce(7500)
-    self:setMass(50)
+    self:setMoveForce(2000)
+    self:setMass(10)
 
     -- what is this for?
     self.intent = nil

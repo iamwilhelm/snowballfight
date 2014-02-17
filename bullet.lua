@@ -12,7 +12,10 @@ function Bullet:init(x, y, rot)
     self:setDimension(20, 20)
     self:setPosition(x, y)
     self:setMass(5)
-    self:setMoveForce(75000)
+    -- slow
+    self:setMoveForce(20000)
+    -- fast
+    -- self:setMoveForce(50000)
     self.rot = rot
 
     -- TODO global
@@ -23,7 +26,7 @@ end
 function Bullet:impulse(dt)
   local ax = self.moveForce / self.mass * math.cos(self.rot)
   local ay = self.moveForce / self.mass * math.sin(self.rot)
-  local fudgeDt = 0.02
+  local fudgeDt = 0.1
   self.vx = self.vx + ax * fudgeDt
   self.vy = self.vy + ay * fudgeDt
 end

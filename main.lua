@@ -49,8 +49,8 @@ function love.update(dt)
   world:each_projectile(function(bullet, i)
     world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet, enemy) then
-        enemy:markForDeletion()
-        bullet:markForDeletion()
+        -- enemy:markForDeletion()
+        physics.transferMomentum(bullet, enemy, 0.75)
       end
     end)
   end)
@@ -62,6 +62,13 @@ function love.update(dt)
     end
   end)
   camera:drag(0.1, dt)
+
+  -- delete non-moving projectiles
+  world:each_projectile(function(bullet, i)
+    if math.abs(bullet.vx) < 5 and math.abs(bullet.vy) < 5 then
+      bullet:markForDeletion()
+    end
+  end)
 
   -------------- entities think -------------
 
