@@ -83,7 +83,8 @@ function Hero:shoot(dt)
   local rot = math.atan2(dy, dx)
 
   local bullet = Bullet:new(self.x, self.y, rot)
-  bullet:setMoveForce(35000)
+  -- from 20000 to 40000
+  bullet:setMoveForce(20000)
   bullet:impulse(dt)
 
   -- TODO global access
