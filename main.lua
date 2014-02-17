@@ -50,7 +50,8 @@ function love.update(dt)
     world:each_enemy(function(enemy, j)
       if physics.isCollide(bullet, enemy) then
         -- enemy:markForDeletion()
-        physics.transferMomentum(bullet, enemy, 0.75)
+        physics.transferMomentum(bullet, enemy, 0.15)
+        bullet:markForDeletion()
       end
     end)
   end)

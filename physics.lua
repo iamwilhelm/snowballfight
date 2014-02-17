@@ -29,6 +29,4 @@ function physics.transferMomentum(a, b, cor)
 
   a:setVelocity(new_a_vx, new_a_vy)
   b:setVelocity(new_b_vx, new_b_vy)
-  a:setAccel(0, 0)
-  b:setAccel(0, 0)
 end
