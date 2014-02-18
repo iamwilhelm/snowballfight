@@ -19,12 +19,10 @@ function love.load()
   Bullet.loadAssets()
 
   -- initialize map and tiles
-
   map = Map:new(60, 40)
   map:setupTileset("assets/tileset.png")
 
   -- initialize world objects
-
   world = World:new()
 
   hero = Hero:new(400, 300)
@@ -43,9 +41,6 @@ function love.load()
 
   -- interface objects
   eyesight = Eyesight:new(camera)
-
-  -- load audio files
-  sounds = {}
 
   -- misc
   isOverlap = false
@@ -75,7 +70,7 @@ function love.update(dt)
   end)
   camera:drag(0.1, dt)
 
-  -- delete non-moving projectiles
+  -- mark for deletion for non-moving projectiles
   world:each_projectile(function(bullet, i)
     if math.abs(bullet.vx) < 5 and math.abs(bullet.vy) < 5 then
       bullet:markForDeletion()
@@ -89,6 +84,12 @@ function love.update(dt)
   end)
   camera:think(dt)
 
+  -- need to do this with flags, since we throw upon release
+  if hero.toShoot == true then
+    hero:shoot(dt)
+    hero.toShoot = false
+  end
+
   -------------- move entities -------------
 
   world:each(function(entity, i)
@@ -97,6 +98,7 @@ function love.update(dt)
   camera:move(dt)
   map:move(dt)
 
+  -------------- limit actors to map --------
   world:each_actor(function(entity, i)
     map:putInside(entity)
   end)
@@ -104,11 +106,6 @@ function love.update(dt)
   -------------- update interface elements
 
   eyesight:think(dt)
-
-  if hero.toShoot == true then
-    hero:shoot(dt)
-    hero.toShoot = false
-  end
 
   -------------- bookkeeping ---------------
 
