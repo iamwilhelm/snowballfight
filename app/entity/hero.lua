@@ -1,4 +1,5 @@
 require('lib/ext/math')
+require('lib/AnAL')
 require('entity')
 require('entity/bullet')
 
@@ -7,8 +8,10 @@ Hero = Entity:new("friendly")
 print("Hero")
 print(Hero)
 
-Hero.sounds = {}
-Hero.sounds.throw = love.audio.newSource("assets/sounds/snow_throw.mp3")
+function Hero.loadAssets()
+  Hero.sounds = {}
+  Hero.sounds.throw = love.audio.newSource("assets/sounds/snow_throw.mp3")
+end
 
 function Hero:init(x, y)
   self.__baseclass:init()

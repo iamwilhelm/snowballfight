@@ -5,8 +5,10 @@ Bullet = Entity:new("projectile")
 print("Bullet")
 print(Bullet)
 
-Bullet.sounds = {}
-Bullet.sounds.splat = love.audio.newSource("assets/sounds/snow_splat.mp3")
+function Bullet.loadAssets()
+  Bullet.sounds = {}
+  Bullet.sounds.splat = love.audio.newSource("assets/sounds/snow_splat.mp3")
+end
 
 function Bullet:init(x, y, rot)
   self.__baseclass:init(x, y)

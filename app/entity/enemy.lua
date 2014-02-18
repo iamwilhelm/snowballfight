@@ -6,7 +6,9 @@ Enemy = Entity:new("enemy")
 print("Enemy")
 print(Enemy)
 
-Enemy.sounds = {}
+function Enemy.loadAssets()
+  Enemy.sounds = {}
+end
 
 function Enemy:init(x, y)
   self.__baseclass:init()

@@ -13,6 +13,11 @@ function love.load()
   rand = love.math.newRandomGenerator()
   rand:setSeed(os.time())
 
+  -- load actor assets
+  Hero.loadAssets()
+  Enemy.loadAssets()
+  Bullet.loadAssets()
+
   -- initialize map and tiles
 
   map = Map:new(60, 40)
@@ -24,6 +29,7 @@ function love.load()
 
   hero = Hero:new(400, 300)
   world:add(hero)
+
   for i = 0, 50 do
     local enemy = Enemy:new(i * 100 + 100, 200)
     world:add(enemy)
