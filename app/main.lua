@@ -2,9 +2,9 @@ require('physics')
 
 require('map')
 require('world')
-require('hero')
-require('bullet')
-require('enemy')
+require('entity/hero')
+require('entity/bullet')
+require('entity/enemy')
 
 require('camera')
 require('eyesight')

@@ -1,6 +1,6 @@
-require('./ext/math')
+require('lib/ext/math')
 require('entity')
-require('bullet')
+require('entity/bullet')
 
 Hero = Entity:new("friendly")
 

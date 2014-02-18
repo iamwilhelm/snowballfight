@@ -1,5 +1,5 @@
 require('class')
-require('ext/math')
+require('lib/ext/math')
 
 Entity = class:new()
 
