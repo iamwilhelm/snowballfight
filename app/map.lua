@@ -128,13 +128,13 @@ end
 
 function Map:putInside(entity)
   if entity.x < self:left() then
-    entity.x = map:left()
+    entity.vx = -entity.vx
   elseif entity.x > self:right() then
-    entity.x = map:right()
+    entity.vx = -entity.vx
   elseif entity.y < self:top() then
-    entity.y = map:top()
+    entity.vy = -entity.vy
   elseif entity.y > self:bottom() then
-    entity.y = map:bottom()
+    entity.vy = -entity.vy
   end
 end
 
