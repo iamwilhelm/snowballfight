@@ -17,10 +17,7 @@ function Bullet:init(x, y, rot)
     self:setDimension(20, 20)
     self:setPosition(x, y)
     self:setMass(5)
-    -- slow
     self:setMoveForce(20000)
-    -- fast
-    -- self:setMoveForce(50000)
     self.rot = rot
 
     -- TODO global

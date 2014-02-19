@@ -38,6 +38,7 @@ function Hero:init(x, y)
 
     -- what is this for?
     self.stunTimestamp = love.timer.getTime()
+    self.chargeTimestamp = love.timer.getTime()
     self.state = "running"
 
     -- set animations for each state
@@ -200,15 +201,29 @@ function Hero:stopVertical(dt)
   self.ay = 0
 end
 
+function Hero:charge(dt)
+  self.chargeTimestamp = love.timer.getTime()
+end
+
+function Hero:chargedForce(elapsed)
+  local u = 0.5
+  local sigma = 0.25
+  return 1 / (sigma * math.sqrt(2 * math.pi)) *
+    math.exp(-math.pow(elapsed - u, 2) / (2 * math.pow(sigma, 2)))
+end
+
 function Hero:shoot(dt)
   dt = dt or love.timer.getDelta()
   local dx = eyesight.x - self.x
   local dy = eyesight.y - self.y
   local rot = math.atan2(dy, dx)
 
+  local elapsed = love.timer.getTime() - self.chargeTimestamp
+  local force = 25000 * self:chargedForce(elapsed)
+  print(elapsed, force)
+
   local bullet = Bullet:new(self.x, self.y, rot)
-  -- from 20000 to 40000
-  bullet:setMoveForce(20000)
+  bullet:setMoveForce(force)
   bullet:impulse(dt)
 
   -- TODO global access
