@@ -22,6 +22,20 @@ function Bullet:init(x, y, rot)
 
     -- TODO global
     self.hero = hero
+
+    self.z = 0.75 * self.hero.height
+    self.vz = 0
+  end
+end
+
+function Bullet:move(dt)
+  Entity.move(self, dt)
+
+  -- a hack for making snowballs fall to the ground
+  self.vz = self.vz - 30 * 9.81 * dt
+  self.z = self.z + self.vz * dt
+  if self.z < 0 then
+    self:markForDeletion()
   end
 end
 
@@ -41,7 +55,9 @@ end
 
 function Bullet:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.circle("fill", self.x, self.y, self.width / 2)
+  love.graphics.circle("fill", self.x,
+    self.y + (0.75 * self.hero.height - self.z),
+    self.width / 2)
 end
 
 
