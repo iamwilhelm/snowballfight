@@ -130,7 +130,7 @@ function Enemy:think(dt)
         self.ay = -self.moveForce / self.mass
       end
     end
-    if rand:random() < 0.005 then
+    if rand:random() < 0.001 then
       self:shoot(dt)
     end
 
@@ -188,7 +188,7 @@ function Enemy:shoot(dt)
   local rot = math.atan2(dy, dx)
 
   local elapsed = rand:random()
-  local force = 20000 * self:chargedForce(elapsed)
+  local force = 12000 * self:chargedForce(elapsed)
 
   local bullet = Bullet:new(self, self.x, self.y, rot)
   bullet:setMoveForce(force)

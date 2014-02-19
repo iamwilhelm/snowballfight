@@ -132,7 +132,7 @@ function Hero:think(dt)
       self:stopVertical(dt)
     end
 
-    if love.keyboard.isDown("e") then
+    if love.keyboard.isDown("q") then
       self:stun(dt)
     end
   elseif self.state == "stunned" then
@@ -206,7 +206,7 @@ function Hero:charge(dt)
 end
 
 function Hero:chargedForce(elapsed)
-  local u = 0.5
+  local u = 0.3
   local sigma = 0.25
   return 1 / (sigma * math.sqrt(2 * math.pi)) *
     math.exp(-math.pow(elapsed - u, 2) / (2 * math.pow(sigma, 2)))
@@ -219,7 +219,7 @@ function Hero:shoot(dt)
   local rot = math.atan2(dy, dx)
 
   local elapsed = love.timer.getTime() - self.chargeTimestamp
-  local force = 25000 * self:chargedForce(elapsed)
+  local force = 12000 * self:chargedForce(elapsed)
 
   local bullet = Bullet:new(self, self.x, self.y, rot)
   bullet:setMoveForce(force)

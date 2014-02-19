@@ -34,7 +34,7 @@ function Bullet:move(dt)
   Entity.move(self, dt)
 
   -- a hack for making snowballs fall to the ground
-  self.vz = self.vz - 30 * 9.81 * dt
+  self.vz = self.vz - 12 * 9.81 * dt
   self.z = self.z + self.vz * dt
   if self.z < 0 then
     self:markForDeletion()
