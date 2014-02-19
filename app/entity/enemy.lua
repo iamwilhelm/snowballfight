@@ -28,8 +28,8 @@ function Enemy:init(x, y)
 
   if self ~= Enemy then
     self:setPosition(x, y)
-    self:setDimension(48, 69)
-    self:setMoveForce(2000)
+    self:setDimension(40, 60)
+    self:setMoveForce(1500)
     self:setMass(10)
 
     self.stunTimestamp = love.timer.getTime()
@@ -67,33 +67,38 @@ end
 function Enemy:draw()
   love.graphics.setColor(255, 255, 255, 100)
 
-  --love.graphics.rectangle("fill",
-  --  self.x - self.width / 2,
-  --  self.y - self.height / 2,
-  --  self.width, self.height)
+  love.graphics.rectangle("fill",
+    self.x - self.width / 2,
+    self.y - self.height / 2,
+    self.width, self.height)
 
   love.graphics.setColor(255, 255, 255, 255)
 
   if self.state == "running" then
 
     if self.ax <= 0 then
+      love.graphics.setColor(127, 255, 127, 255)
       self.anim.runningLegs.left:draw(self.x, self.y,
                                       0, 1, 1, 38 / 2 + 8, 30 / 2 - 12 - 4)
       self.anim.runningTorso.left:draw(self.x, self.y,
                                        0, 1, 1, 34 / 2, 33 / 2 - 4)
+      love.graphics.setColor(255, 255, 255, 255)
       self.anim.runningHead.left:draw(self.x, self.y,
                                       0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
     elseif self.ax > 0 then
+      love.graphics.setColor(127, 255, 127, 255)
       self.anim.runningLegs.right:draw(self.x, self.y,
                                        0, 1, 1, 38 / 2 - 8, 30 / 2 - 12 - 4)
       self.anim.runningTorso.right:draw(self.x, self.y,
                                         0, 1, 1, 34 / 2, 33 / 2 - 4)
+      love.graphics.setColor(255, 255, 255, 255)
       self.anim.runningHead.right:draw(self.x, self.y,
                                        0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
     end
 
   elseif self.state == "stunned" then
     -- stunned is opposite of direction moving
+    love.graphics.setColor(127, 255, 127, 255)
     if self.vx >= 0 then
       self.anim.stunned.left:draw(self.x, self.y,
                                   0, 1, 1, 58 / 2, 69 / 2)
@@ -101,6 +106,7 @@ function Enemy:draw()
       self.anim.stunned.right:draw(self.x, self.y,
                                    0, 1, 1, 58 / 2, 69 / 2)
     end
+    love.graphics.setColor(255, 255, 255, 255)
   end
 
 end
