@@ -130,7 +130,7 @@ function Enemy:think(dt)
         self.ay = -self.moveForce / self.mass
       end
     end
-    if rand:random() < 0.001 then
+    if rand:random() < 0.005 then
       self:shoot(dt)
     end
 
@@ -183,8 +183,8 @@ end
 
 function Enemy:shoot(dt)
   dt = dt or love.timer.getDelta()
-  local dx = hero.x - self.x
-  local dy = hero.y - self.y
+  local dx = hero.x - self.x + rand:random(-64, 64)
+  local dy = hero.y - self.y + rand:random(-64, 64)
   local rot = math.atan2(dy, dx)
 
   local elapsed = rand:random()
