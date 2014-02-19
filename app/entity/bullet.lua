@@ -10,7 +10,7 @@ function Bullet.loadAssets()
   Bullet.sounds.splat = love.audio.newSource("assets/sounds/snow_splat.mp3")
 end
 
-function Bullet:init(x, y, rot)
+function Bullet:init(owner, x, y, rot)
   self.__baseclass:init(x, y)
 
   if self ~= Bullet then
@@ -20,10 +20,12 @@ function Bullet:init(x, y, rot)
     self:setMoveForce(20000)
     self.rot = rot
 
-    -- TODO global
-    self.hero = hero
+    self.initX = x
+    self.initY = y
 
-    self.z = 0.75 * self.hero.height
+    self.owner = owner
+
+    self.z = 0.75 * self.owner.height
     self.vz = 0
   end
 end
@@ -56,8 +58,11 @@ end
 function Bullet:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.circle("fill", self.x,
-    self.y + (0.75 * self.hero.height - self.z),
+    self.y + (0.75 * self.owner.height - self.z),
     self.width / 2)
 end
 
-
+function Bullet:isLethal()
+  return math.abs(self.x - self.initX) > self.owner:personalRadius() and
+    math.abs(self.y - self.initY) > self.owner:personalRadius()
+end

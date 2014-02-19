@@ -8,6 +8,7 @@ print(Enemy)
 
 function Enemy.loadAssets()
   Enemy.sounds = {}
+  Enemy.sounds.throw = love.audio.newSource("assets/sounds/snow_throw.mp3")
   Enemy.sounds.thud = love.audio.newSource("assets/sounds/punch.mp3")
 
   Enemy.images = {}
@@ -129,6 +130,9 @@ function Enemy:think(dt)
         self.ay = -self.moveForce / self.mass
       end
     end
+    if rand:random() < 0.001 then
+      self:shoot(dt)
+    end
 
   elseif self.state == "stunned" then
     -- do nothing
@@ -170,11 +174,43 @@ function Enemy:move(dt)
   end
 end
 
+function Enemy:chargedForce(elapsed)
+  local u = 0.5
+  local sigma = 0.25
+  return 1 / (sigma * math.sqrt(2 * math.pi)) *
+    math.exp(-math.pow(elapsed - u, 2) / (2 * math.pow(sigma, 2)))
+end
+
+function Enemy:shoot(dt)
+  dt = dt or love.timer.getDelta()
+  local dx = hero.x - self.x
+  local dy = hero.y - self.y
+  local rot = math.atan2(dy, dx)
+
+  local elapsed = rand:random()
+  local force = 25000 * self:chargedForce(elapsed)
+
+  local bullet = Bullet:new(self, self.x, self.y, rot)
+  bullet:setMoveForce(force)
+  bullet:impulse(dt)
+
+  -- TODO global access
+  world:add(bullet)
+
+  -- play sound (should be in a before filter or state change callback)
+  love.audio.play(Hero.sounds.throw)
+
+end
+
 function Enemy:stun(dt)
   self.state = "stunned"
   self.stunTimestamp = love.timer.getTime()
   self:setAccel(0, 0)
   love.audio.play(Enemy.sounds.thud)
+end
+
+function Enemy:personalRadius()
+  return math.max(self.width / 2, self.height / 2)
 end
 
 function Enemy:drag(friction, dt)

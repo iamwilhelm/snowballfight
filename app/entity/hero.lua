@@ -220,9 +220,8 @@ function Hero:shoot(dt)
 
   local elapsed = love.timer.getTime() - self.chargeTimestamp
   local force = 25000 * self:chargedForce(elapsed)
-  print(elapsed, force)
 
-  local bullet = Bullet:new(self.x, self.y, rot)
+  local bullet = Bullet:new(self, self.x, self.y, rot)
   bullet:setMoveForce(force)
   bullet:impulse(dt)
 
@@ -239,6 +238,11 @@ function Hero:stun(dt)
   self:setAccel(0, 0)
   love.audio.play(Hero.sounds.thud)
 end
+
+function Hero:personalRadius()
+  return math.max(self.width / 2, self.height / 2)
+end
+
 -- draggable
 
 function Hero:drag(friction, dt)
