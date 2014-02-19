@@ -40,9 +40,9 @@ function Enemy:init(x, y)
     self.anim = {}
 
     self.anim.stunned = {}
-    self.anim.stunned.left = newAnimation(Enemy.images.stunLeft, 58, 69, 0.125, 0)
+    self.anim.stunned.left = newAnimation(Enemy.images.stunLeft, 58, 69, 0.175, 0)
     self.anim.stunned.left:setMode('once')
-    self.anim.stunned.right = newAnimation(Enemy.images.stunRight, 58, 69, 0.125, 0)
+    self.anim.stunned.right = newAnimation(Enemy.images.stunRight, 58, 69, 0.175, 0)
     self.anim.stunned.right:setMode('once')
 
     self.anim.throwing = {}
@@ -146,11 +146,12 @@ function Enemy:move(dt)
   elseif self.state == "stunned" then
 
     if (love.timer.getTime() - self.stunTimestamp) > 2 then
-      self.state = "running"
       self.anim.stunned.left:reset()
       self.anim.stunned.left:play()
+      self.anim.stunned.right:reset()
+      self.anim.stunned.right:play()
+      self.state = "running"
     else
-
       if self.vx <= 0 then
         self.anim.stunned.right:update(dt)
       elseif self.vx > 0 then
