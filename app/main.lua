@@ -19,7 +19,7 @@ function love.load()
   Bullet.loadAssets()
 
   -- initialize map and tiles
-  map = Map:new(60, 40)
+  map = Map:new(30, 15)
   map:setupTileset("assets/tiles/snow_on_stones.png")
 
   -- initialize world objects
