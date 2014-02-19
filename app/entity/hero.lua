@@ -96,7 +96,7 @@ function Hero:shoot(dt)
   -- TODO global access
   world:add(bullet)
 
-  -- play sound (should be in a before filter
+  -- play sound (should be in a before filter or state change callback)
   love.audio.play(Hero.sounds.throw)
 end
 

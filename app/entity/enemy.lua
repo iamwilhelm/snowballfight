@@ -28,7 +28,7 @@ function Enemy:init(x, y)
 
   if self ~= Enemy then
     self:setPosition(x, y)
-    self:setDimension(58, 69)
+    self:setDimension(48, 69)
     self:setMoveForce(2000)
     self:setMass(10)
 
@@ -65,28 +65,44 @@ function Enemy:init(x, y)
 end
 
 function Enemy:draw()
+  love.graphics.setColor(255, 255, 255, 100)
+
+  --love.graphics.rectangle("fill",
+  --  self.x - self.width / 2,
+  --  self.y - self.height / 2,
+  --  self.width, self.height)
+
   love.graphics.setColor(255, 255, 255, 255)
 
   if self.state == "running" then
 
     if self.ax <= 0 then
+      self.anim.runningLegs.left:draw(self.x, self.y,
+                                      0, 1, 1, 38 / 2 + 8, 30 / 2 - 12 - 4)
       self.anim.runningTorso.left:draw(self.x, self.y,
-                                  0, 1, 1, self.width / 2, self.height / 2)
+                                       0, 1, 1, 34 / 2, 33 / 2 - 4)
+      self.anim.runningHead.left:draw(self.x, self.y,
+                                      0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
     elseif self.ax > 0 then
+      self.anim.runningLegs.right:draw(self.x, self.y,
+                                       0, 1, 1, 38 / 2 - 8, 30 / 2 - 12 - 4)
       self.anim.runningTorso.right:draw(self.x, self.y,
-                                   0, 1, 1, self.width / 2, self.height / 2)
+                                        0, 1, 1, 34 / 2, 33 / 2 - 4)
+      self.anim.runningHead.right:draw(self.x, self.y,
+                                       0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
     end
 
   elseif self.state == "stunned" then
     -- stunned is opposite of direction moving
     if self.vx >= 0 then
       self.anim.stunned.left:draw(self.x, self.y,
-                                  0, 1, 1, self.width / 2, self.height / 2)
+                                  0, 1, 1, 58 / 2, 69 / 2)
     elseif self.vx < 0 then
       self.anim.stunned.right:draw(self.x, self.y,
-                                   0, 1, 1, self.width / 2, self.height / 2)
+                                   0, 1, 1, 58 / 2, 69 / 2)
     end
   end
+
 end
 
 function Enemy:think(dt)
@@ -118,9 +134,13 @@ function Enemy:move(dt)
   if self.state == "running" then
 
     if self.ax <= 0 then
+      self.anim.runningLegs.left:update(dt)
       self.anim.runningTorso.left:update(dt)
+      self.anim.runningHead.left:update(dt)
     elseif self.ax > 0 then
+      self.anim.runningLegs.right:update(dt)
       self.anim.runningTorso.right:update(dt)
+      self.anim.runningHead.right:update(dt)
     end
 
   elseif self.state == "stunned" then

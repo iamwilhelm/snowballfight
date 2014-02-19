@@ -29,7 +29,7 @@ function love.load()
   world:add(hero)
 
   for i = 0, 50 do
-    local enemy = Enemy:new(i * 100 + 100, 200)
+    local enemy = Enemy:new(i * 100 + 100, 250)
     world:add(enemy)
   end
 
