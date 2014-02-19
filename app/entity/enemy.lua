@@ -9,14 +9,18 @@ print(Enemy)
 function Enemy.loadAssets()
   Enemy.sounds = {}
 
-
   Enemy.images = {}
   Enemy.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
   Enemy.images.stunRight = love.graphics.newImage("assets/sprites/sballer/sballerLstunRight.png")
   Enemy.images.throwLeft = love.graphics.newImage("assets/sprites/sballer/sballerLthrowLeft.png")
   Enemy.images.throwRight = love.graphics.newImage("assets/sprites/sballer/sballerLthrowRight.png")
-  Enemy.images.runLeft = love.graphics.newImage("assets/sprites/sballer/sballerTrunLeft.png")
-  Enemy.images.runRight = love.graphics.newImage("assets/sprites/sballer/sballerTrunRight.png")
+
+  Enemy.images.runningHeadLeft = love.graphics.newImage("assets/sprites/sballer/sballerHrunLeft.png")
+  Enemy.images.runningHeadRight = love.graphics.newImage("assets/sprites/sballer/sballerHrunRight.png")
+  Enemy.images.runningTorsoLeft = love.graphics.newImage("assets/sprites/sballer/sballerTrunLeft.png")
+  Enemy.images.runningTorsoRight = love.graphics.newImage("assets/sprites/sballer/sballerTrunRight.png")
+  Enemy.images.runningLegsLeft = love.graphics.newImage("assets/sprites/sballer/sballerLrunLeft.png")
+  Enemy.images.runningLegsRight = love.graphics.newImage("assets/sprites/sballer/sballerLrunRight.png")
 end
 
 function Enemy:init(x, y)
@@ -36,19 +40,27 @@ function Enemy:init(x, y)
     self.anim = {}
 
     self.anim.stunned = {}
-    self.anim.stunned.right = newAnimation(Enemy.images.stunRight, 58, 69, 0.15, 0)
-    self.anim.stunned.right:setMode('once')
-    self.anim.stunned.left = newAnimation(Enemy.images.stunLeft, 58, 69, 0.15, 0)
+    self.anim.stunned.left = newAnimation(Enemy.images.stunLeft, 58, 69, 0.125, 0)
     self.anim.stunned.left:setMode('once')
-
+    self.anim.stunned.right = newAnimation(Enemy.images.stunRight, 58, 69, 0.125, 0)
+    self.anim.stunned.right:setMode('once')
 
     self.anim.throwing = {}
-    self.anim.throwing.right = newAnimation(Enemy.images.throwRight, 75, 68, 0.1, 0)
     self.anim.throwing.left = newAnimation(Enemy.images.throwLeft, 75, 68, 0.1, 0)
+    self.anim.throwing.right = newAnimation(Enemy.images.throwRight, 75, 68, 0.1, 0)
 
-    self.anim.running = {}
-    self.anim.running.right = newAnimation(Enemy.images.runRight, 34, 33, 0.1, 0)
-    self.anim.running.left = newAnimation(Enemy.images.runLeft, 34, 33, 0.1, 0)
+    self.anim.runningHead = {}
+    self.anim.runningHead.left = newAnimation(Enemy.images.runningHeadLeft, 31, 30, 0.1, 0)
+    self.anim.runningHead.right = newAnimation(Enemy.images.runningHeadRight, 31, 30, 0.1, 0)
+
+    self.anim.runningTorso = {}
+    self.anim.runningTorso.left = newAnimation(Enemy.images.runningTorsoLeft, 34, 33, 0.1, 0)
+    self.anim.runningTorso.right = newAnimation(Enemy.images.runningTorsoRight, 34, 33, 0.1, 0)
+
+    self.anim.runningLegs = {}
+    self.anim.runningLegs.left = newAnimation(Enemy.images.runningLegsLeft, 38, 30, 0.1, 0)
+    self.anim.runningLegs.right = newAnimation(Enemy.images.runningLegsRight, 38, 30, 0.1, 0)
+
   end
 end
 
@@ -57,12 +69,12 @@ function Enemy:draw()
 
   if self.state == "running" then
 
-    if self.ax >= 0 then
-      self.anim.running.right:draw(self.x, self.y,
-                                   0, 1, 1, self.width / 2, self.height / 2)
-    elseif self.ax < 0 then
-      self.anim.running.left:draw(self.x, self.y,
+    if self.ax <= 0 then
+      self.anim.runningTorso.left:draw(self.x, self.y,
                                   0, 1, 1, self.width / 2, self.height / 2)
+    elseif self.ax > 0 then
+      self.anim.runningTorso.right:draw(self.x, self.y,
+                                   0, 1, 1, self.width / 2, self.height / 2)
     end
 
   elseif self.state == "stunned" then
@@ -105,10 +117,10 @@ function Enemy:move(dt)
 
   if self.state == "running" then
 
-    if self.ax >= 0 then
-      self.anim.running.right:update(dt)
-    elseif self.ax < 0 then
-      self.anim.running.left:update(dt)
+    if self.ax <= 0 then
+      self.anim.runningTorso.left:update(dt)
+    elseif self.ax > 0 then
+      self.anim.runningTorso.right:update(dt)
     end
 
   elseif self.state == "stunned" then
@@ -119,10 +131,10 @@ function Enemy:move(dt)
       self.anim.stunned.left:play()
     else
 
-      if self.vx >= 0 then
-        self.anim.stunned.left:update(dt)
-      elseif self.vx < 0 then
+      if self.vx <= 0 then
         self.anim.stunned.right:update(dt)
+      elseif self.vx > 0 then
+        self.anim.stunned.left:update(dt)
       end
 
     end
