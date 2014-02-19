@@ -20,7 +20,7 @@ function love.load()
 
   -- initialize map and tiles
   map = Map:new(60, 40)
-  map:setupTileset("assets/tileset.png")
+  map:setupTileset("assets/tiles/snow_on_stones.png")
 
   -- initialize world objects
   world = World:new()

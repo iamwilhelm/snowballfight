@@ -8,8 +8,8 @@ print(Map)
 function Map:init(mapTileWidth, mapTileHeight)
   self.mapTileWidth = mapTileWidth
   self.mapTileHeight = mapTileHeight
-  self.tileWidth = 32
-  self.tileHeight = 32
+  self.tileWidth = 64
+  self.tileHeight = 64
 
   self.map = {}
   for x = 1, self.mapTileWidth do
@@ -18,7 +18,7 @@ function Map:init(mapTileWidth, mapTileHeight)
       self.map[x][y] = math.random(0, 3)
     end
   end
-  self.map[2][2] = 5
+  self.map[2][2] = 3
 
   self.tileQuads = {}
 
@@ -44,13 +44,14 @@ function Map:setupTileset(filename)
                                  tilesetImage:getWidth(), tilesetImage:getHeight())
   end
 
-  self.tileQuads[0] = getQuadAt(5, 17) -- grass1
-  self.tileQuads[2] = getQuadAt(5, 18) -- grass2
-  self.tileQuads[1] = getQuadAt(5, 19) -- pebble
-  self.tileQuads[3] = getQuadAt(6, 18) -- flower1
-  self.tileQuads[4] = getQuadAt(6, 19) -- flower2
-  self.tileQuads[5] = getQuadAt(4, 18) -- stone
-  self.tileQuads[6] = getQuadAt(4, 19) -- stone2
+  self.tileQuads[0] = getQuadAt(0, 0) -- snow
+  self.tileQuads[1] = getQuadAt(0, 1) -- pebble
+  self.tileQuads[2] = getQuadAt(0, 2) -- grass2
+  self.tileQuads[3] = getQuadAt(0, 3) -- flower1
+  self.tileQuads[4] = getQuadAt(2, 0) -- flower2
+  self.tileQuads[5] = getQuadAt(2, 1) -- stone
+  self.tileQuads[6] = getQuadAt(2, 2) -- stone2
+  self.tileQuads[6] = getQuadAt(2, 3) -- stone2
 
   local totalNumOfTiles = self.viewTileWidth * self.viewTileHeight
   self.tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, totalNumOfTiles)
