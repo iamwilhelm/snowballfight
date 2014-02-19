@@ -71,12 +71,11 @@ function Hero:init(x, y)
 end
 
 function Hero:draw()
-  love.graphics.setColor(255, 255, 255, 100)
-
-  love.graphics.rectangle("fill",
-    self.x - self.width / 2,
-    self.y - self.height / 2,
-    self.width, self.height)
+  --love.graphics.setColor(255, 255, 255, 100)
+  --love.graphics.rectangle("fill",
+  --  self.x - self.width / 2,
+  --  self.y - self.height / 2,
+  --  self.width, self.height)
 
   love.graphics.setColor(255, 255, 255, 255)
 
