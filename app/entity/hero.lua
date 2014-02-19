@@ -39,7 +39,6 @@ function Hero:init(x, y)
     -- what is this for?
     self.stunTimestamp = love.timer.getTime()
     self.state = "running"
-    self.toShoot = false
 
     -- set animations for each state
 
@@ -202,6 +201,7 @@ function Hero:stopVertical(dt)
 end
 
 function Hero:shoot(dt)
+  dt = dt or love.timer.getDelta()
   local dx = eyesight.x - self.x
   local dy = eyesight.y - self.y
   local rot = math.atan2(dy, dx)

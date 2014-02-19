@@ -84,12 +84,6 @@ function love.update(dt)
   end)
   camera:think(dt)
 
-  -- need to do this with flags, since we throw upon release
-  if hero.toShoot == true then
-    hero:shoot(dt)
-    hero.toShoot = false
-  end
-
   -------------- move entities -------------
 
   world:each(function(entity, i)
@@ -161,7 +155,7 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
-  hero.toShoot = true
+  hero:shoot(dt)
 end
 
 function love.quit()
