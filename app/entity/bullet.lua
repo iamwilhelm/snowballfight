@@ -62,7 +62,6 @@ function Bullet:draw()
     self.width / 2)
 end
 
-function Bullet:isLethal()
-  return math.abs(self.x - self.initX) > self.owner:personalRadius() and
-    math.abs(self.y - self.initY) > self.owner:personalRadius()
+function Bullet:isLethalTo(actor)
+  return self.owner ~= actor
 end

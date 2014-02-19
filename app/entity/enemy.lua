@@ -209,10 +209,6 @@ function Enemy:stun(dt)
   love.audio.play(Enemy.sounds.thud)
 end
 
-function Enemy:personalRadius()
-  return math.max(self.width / 2, self.height / 2)
-end
-
 function Enemy:drag(friction, dt)
   self.vx = self.vx - friction * self.vx
   self.vy = self.vy - friction * self.vy

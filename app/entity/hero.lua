@@ -239,10 +239,6 @@ function Hero:stun(dt)
   love.audio.play(Hero.sounds.thud)
 end
 
-function Hero:personalRadius()
-  return math.max(self.width / 2, self.height / 2)
-end
-
 -- draggable
 
 function Hero:drag(friction, dt)

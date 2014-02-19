@@ -28,7 +28,7 @@ function love.load()
   hero = Hero:new(400, 300)
   world:add(hero)
 
-  for i = 0, 10 do
+  for i = 0, 40 do
     local enemy = Enemy:new(i * 100 + 100, 250)
     world:add(enemy)
   end
@@ -53,7 +53,7 @@ function love.update(dt)
   -- for i, bullet in ipairs(world:projectiles()) do
   world:each_projectile(function(bullet, i)
     world:each_actor(function(actor, j)
-      if physics.isCollide(bullet, actor) and bullet:isLethal() then
+      if bullet:isLethalTo(actor) and physics.isCollide(bullet, actor) then
         bullet:hitTarget()
         actor:stun()
         physics.transferMomentum(bullet, actor, 0.25)
