@@ -188,7 +188,7 @@ function Enemy:shoot(dt)
   local rot = math.atan2(dy, dx)
 
   local elapsed = rand:random()
-  local force = 25000 * self:chargedForce(elapsed)
+  local force = 20000 * self:chargedForce(elapsed)
 
   local bullet = Bullet:new(self, self.x, self.y, rot)
   bullet:setMoveForce(force)
