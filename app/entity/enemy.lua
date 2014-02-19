@@ -8,6 +8,7 @@ print(Enemy)
 
 function Enemy.loadAssets()
   Enemy.sounds = {}
+  Enemy.sounds.thud = love.audio.newSource("assets/sounds/punch.mp3")
 
   Enemy.images = {}
   Enemy.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
@@ -173,6 +174,7 @@ function Enemy:stun(dt)
   self.state = "stunned"
   self.stunTimestamp = love.timer.getTime()
   self:setAccel(0, 0)
+  love.audio.play(Enemy.sounds.thud)
 end
 
 function Enemy:drag(friction, dt)

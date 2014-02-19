@@ -11,6 +11,7 @@ print(Hero)
 function Hero.loadAssets()
   Hero.sounds = {}
   Hero.sounds.throw = love.audio.newSource("assets/sounds/snow_throw.mp3")
+  Hero.sounds.thud = love.audio.newSource("assets/sounds/punch.mp3")
 
   Hero.images = {}
   Hero.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
@@ -221,6 +222,7 @@ function Hero:stun(dt)
   self.state = "stunned"
   self.stunTimestamp = love.timer.getTime()
   self:setAccel(0, 0)
+  love.audio.play(Hero.sounds.thud)
 end
 -- draggable
 
