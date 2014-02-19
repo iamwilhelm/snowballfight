@@ -57,7 +57,7 @@ function love.update(dt)
         -- enemy:markForDeletion()
         bullet:hitTarget()
         enemy:stun()
-        physics.transferMomentum(bullet, enemy, 1)
+        physics.transferMomentum(bullet, enemy, 0.5)
       end
     end)
   end)
