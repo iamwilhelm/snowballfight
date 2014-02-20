@@ -33,7 +33,7 @@ function Hero:init(x, y)
   if self ~= Hero then
     self:setPosition(x, y)
     self:setDimension(40, 60)
-    self:setMoveForce(1500)
+    self:setMoveForce(5000)
     self:setMass(10)
 
     -- what is this for?

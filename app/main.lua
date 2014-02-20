@@ -56,7 +56,7 @@ function love.update(dt)
       if bullet:isLethalTo(actor) and physics.isCollide(bullet, actor) then
         bullet:hitTarget()
         actor:stun()
-        physics.transferMomentum(bullet, actor, 0.25)
+        physics.transferMomentum(bullet, actor, 1)
       end
     end)
   end)
@@ -64,7 +64,7 @@ function love.update(dt)
   -- friction on the ground
   world:each_actor(function(entity, i)
     if entity.drag then
-      entity:drag(0.025, dt)
+      entity:drag(0.075, dt)
     end
   end)
   camera:drag(0.1, dt)
