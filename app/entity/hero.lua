@@ -1,5 +1,6 @@
 require('lib/ext/math')
 require('lib/AnAL')
+local statemachine = require('lib/statemachine')
 require('entity')
 require('entity/bullet')
 
@@ -36,105 +37,191 @@ function Hero:init(x, y)
     self:setMoveForce(5000)
     self:setMass(10)
 
-    -- what is this for?
     self.stunTimestamp = love.timer.getTime()
     self.chargeTimestamp = love.timer.getTime()
     self.state = "running"
+
+    -- All the possible states and descriptions
+    --
+    -- standing: not moving with nothing in hands
+    -- holding: not moving with something in hands
+    -- crouching: not moving and stooped low (making a snowball)
+    -- catching: not moving with hands outstretched to catch
+    --
+    -- running: moving around without anything in hands
+    -- carrying: moving around with something in hands
+    --
+    -- winding_up: cocking arm in preparation to throw
+    -- throwing: throwing snowball
+    --
+    -- reeling: got hit by a snowball
+    --
+    -- idleing: not moving, but keeping oneself busy
+    --
+    self.fsm = statemachine.create({
+      metatable = self,
+      initial = 'Standing',
+      events = {
+        { name = 'Run', from = 'Standing', to = 'Running' },
+        { name = 'Stop', from = 'Running', to = 'Standing' },
+
+        { name = 'Run', from = 'Holding', to = 'Carrying' },
+        { name = 'Stop', from = 'Carrying', to = 'Holding' },
+
+        -- cannot crouch if holding/carrying something
+        { name = 'Crouch', from = {'Standing', 'Running'}, to = 'Crouching' },
+        { name = 'Stand', from = 'Crouch', to = 'Holding' }, -- timeout activated
+
+        { name = 'Outstretch_arms', from = {'Standing', 'Running'}, to = 'Catching' },
+        { name = 'Tuck_arms', from = 'Catching', to = 'Holding' }, -- timeout activated
+
+        { name = 'Windup_throw', from = 'Holding', to ='Winduping' },
+        { name = 'Release_throw', from = 'Winduping', to = 'Throwing' },
+        { name = 'Recover_throw', from = 'Throwing', to = 'Standing' },
+
+        { name = 'Hurt',
+          from = {'Standing', 'Running', 'Catching', 'Crouching', 'Holding', 'Winduping'},
+          to = 'Reeling' },
+        { name = 'Block', from = {'Holding', 'Carrying'}, to = 'Standing' }
+      },
+    })
 
     -- set animations for each state
 
     self.anim = {}
 
-    self.anim.stunned = {}
-    self.anim.stunned.left = newAnimation(Hero.images.stunLeft, 58, 69, 0.175, 0)
-    self.anim.stunned.left:setMode('once')
-    self.anim.stunned.right = newAnimation(Hero.images.stunRight, 58, 69, 0.175, 0)
-    self.anim.stunned.right:setMode('once')
+    self.anim.standing = {
+      left = {
+        head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
+        torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        legs = { newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0), 38, 30, 8, -12 - 4 },
+      },
+      right = {
+        head = { newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0), 31, 30, 0, 20 - 3 },
+        torso = { newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        legs = { newAnimation(Hero.images.runningLegsRight, 38, 30, 0.1, 0), 38, 30, -8, -12 - 4},
+      }
+    }
 
-    self.anim.throwing = {}
-    self.anim.throwing.left = newAnimation(Hero.images.throwLeft, 75, 68, 0.1, 0)
-    self.anim.throwing.right = newAnimation(Hero.images.throwRight, 75, 68, 0.1, 0)
+    self.anim.running = {
+      left = {
+        -- { animation, width, height, offsetX, offsetY }
+        head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
+        torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        legs = { newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0), 38, 30, 8, -12 - 4 },
+      },
+      right = {
+        head = { newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0), 31, 30, 0, 20 - 3 },
+        torso = { newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        legs = { newAnimation(Hero.images.runningLegsRight, 38, 30, 0.1, 0), 38, 30, -8, -12 - 4},
+      }
+    }
 
-    self.anim.runningHead = {}
-    self.anim.runningHead.left = newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0)
-    self.anim.runningHead.right = newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0)
+    self.anim.throwing = {
+      left = { all = { newAnimation(Hero.images.throwLeft, 75, 68, 0.1, 0), 58, 69, 0, 0 } },
+      right = { all = { newAnimation(Hero.images.throwRight, 75, 68, 0.1, 0), 58, 69, 0, 0 } }
+    }
 
-    self.anim.runningTorso = {}
-    self.anim.runningTorso.left = newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0)
-    self.anim.runningTorso.right = newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0)
+    -- 58 / 2, 69 / 2)
+    self.anim.reeling = {
+      left = { all = { newAnimation(Hero.images.stunLeft, 58, 69, 0.175, 0), 58, 69, 0, 0 } },
+      right = { all = { newAnimation(Hero.images.stunRight, 58, 69, 0.175, 0), 58, 69, 0, 0 } },
+    }
+    self.anim.reeling.left.all[1]:setMode('once')
+    self.anim.reeling.right.all[1]:setMode('once')
 
-    self.anim.runningLegs = {}
-    self.anim.runningLegs.left = newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0)
-    self.anim.runningLegs.right = newAnimation(Hero.images.runningLegsRight, 38, 30, 0.1, 0)
-
+    self.curr_anim = self.anim.running.left
   end
 end
 
+function Hero:onStanding(event, from, to)
+  if (self.vx <= 0) then
+    self.curr_anim = self.anim.standing.left
+  else
+    self.curr_anim = self.anim.standing.right
+  end
+end
+
+function Hero:onRunning(event, from, to)
+  if (self.vx <= 0) then
+    self.curr_anim = self.anim.running.left
+  else
+    self.curr_anim = self.anim.running.right
+  end
+end
+
+function Hero:onReeling(event, from, to)
+  if (self.vx >= 0) then
+    self.curr_anim = self.anim.reeling.left
+  else
+    self.curr_anim = self.anim.reeling.right
+  end
+end
+
+    --if (love.timer.getTime() - self.stunTimestamp) > 2 then
+    --  self.anim.stunned.left:reset()
+    --  self.anim.stunned.left:play()
+    --  self.anim.stunned.right:reset()
+    --  self.anim.stunned.right:play()
+    --  self.state = "running"
+    --else
+    --  if self.vx <= 0 then
+    --    self.anim.stunned.right:update(dt)
+    --  elseif self.vx > 0 then
+    --    self.anim.stunned.left:update(dt)
+    --  end
+    --end
+
+
+function Hero:draw_bounding_box()
+  love.graphics.setColor(255, 255, 255, 100)
+  love.graphics.rectangle("fill",
+    self.x - self.width / 2,
+    self.y - self.height / 2,
+    self.width, self.height)
+end
+
 function Hero:draw()
-  --love.graphics.setColor(255, 255, 255, 100)
-  --love.graphics.rectangle("fill",
-  --  self.x - self.width / 2,
-  --  self.y - self.height / 2,
-  --  self.width, self.height)
+  self:draw_bounding_box()
 
   love.graphics.setColor(255, 255, 255, 255)
-
-  if self.state == "running" then
-
-    if self.ax <= 0 then
-      self.anim.runningLegs.left:draw(self.x, self.y,
-                                      0, 1, 1, 38 / 2 + 8, 30 / 2 - 12 - 4)
-      self.anim.runningTorso.left:draw(self.x, self.y,
-                                       0, 1, 1, 34 / 2, 33 / 2 - 4)
-      self.anim.runningHead.left:draw(self.x, self.y,
-                                      0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
-    elseif self.ax > 0 then
-      self.anim.runningLegs.right:draw(self.x, self.y,
-                                       0, 1, 1, 38 / 2 - 8, 30 / 2 - 12 - 4)
-      self.anim.runningTorso.right:draw(self.x, self.y,
-                                        0, 1, 1, 34 / 2, 33 / 2 - 4)
-      self.anim.runningHead.right:draw(self.x, self.y,
-                                       0, 1, 1, 31 / 2, 30 / 2 + 20 - 4)
-    end
-
-  elseif self.state == "stunned" then
-    -- stunned is opposite of direction moving
-    if self.vx >= 0 then
-      self.anim.stunned.left:draw(self.x, self.y,
-                                  0, 1, 1, 58 / 2, 69 / 2)
-    elseif self.vx < 0 then
-      self.anim.stunned.right:draw(self.x, self.y,
-                                   0, 1, 1, 58 / 2, 69 / 2)
-    end
+  for k, e in pairs(self.curr_anim) do
+    anim = e[1]
+    anim:draw(self.x, self.y, 0, 1, 1, e[2] / 2 + e[4], e[3] / 2 + e[5])
   end
-
 
 end
 
 -- hero update actions
 
 function Hero:think(dt)
-  if self.state == "running" then
+  if self.fsm.current == "Standing" or self.fsm.current == "Running" then
     if love.keyboard.isDown("a") then
       self:moveLeft(dt)
+      self.fsm:Run()
     elseif love.keyboard.isDown("d") then
       self:moveRight(dt)
+      self.fsm:Run()
     else
       self:stopHorizontal(dt)
+      self.fsm:Stop()
     end
 
     if love.keyboard.isDown("w") then
       self:moveUp(dt)
+      self.fsm:Run()
     elseif love.keyboard.isDown("s") then
       self:moveDown(dt)
+      self.fsm:Run()
     else
       self:stopVertical(dt)
+      self.fsm:Stop()
     end
 
     if love.keyboard.isDown("q") then
       self:stun(dt)
     end
-  elseif self.state == "stunned" then
+  elseif self.self.current == "Reeling" then
     -- do nothing
   end
 end
@@ -142,35 +229,9 @@ end
 function Hero:move(dt)
   Entity.move(self, dt)
 
-  if self.state == "running" then
-
-    if self.ax <= 0 then
-      self.anim.runningLegs.left:update(dt)
-      self.anim.runningTorso.left:update(dt)
-      self.anim.runningHead.left:update(dt)
-    elseif self.ax > 0 then
-      self.anim.runningLegs.right:update(dt)
-      self.anim.runningTorso.right:update(dt)
-      self.anim.runningHead.right:update(dt)
-    end
-
-  elseif self.state == "stunned" then
-
-    if (love.timer.getTime() - self.stunTimestamp) > 2 then
-      self.anim.stunned.left:reset()
-      self.anim.stunned.left:play()
-      self.anim.stunned.right:reset()
-      self.anim.stunned.right:play()
-      self.state = "running"
-    else
-      if self.vx <= 0 then
-        self.anim.stunned.right:update(dt)
-      elseif self.vx > 0 then
-        self.anim.stunned.left:update(dt)
-      end
-
-    end
-
+  for k, e in pairs(self.curr_anim) do
+    anim = e[1]
+    anim:update(dt)
   end
 end
 
