@@ -201,7 +201,7 @@ function Enemy:shoot(dt)
 
 end
 
-function Enemy:stun(dt)
+function Enemy:hurt(dt)
   self.state = "stunned"
   self.stunTimestamp = love.timer.getTime()
   self:setAccel(0, 0)

@@ -39,7 +39,6 @@ function Hero:init(x, y)
 
     self.stunTimestamp = love.timer.getTime()
     self.chargeTimestamp = love.timer.getTime()
-    self.state = "running"
 
     -- All the possible states and descriptions
     --
@@ -82,7 +81,9 @@ function Hero:init(x, y)
         { name = 'Hurt',
           from = {'Standing', 'Running', 'Catching', 'Crouching', 'Holding', 'Winduping'},
           to = 'Reeling' },
-        { name = 'Block', from = {'Holding', 'Carrying'}, to = 'Standing' }
+        { name = 'Recover', from = 'Reeling', to = 'Standing' },
+
+        { name = 'Block', from = {'Holding', 'Carrying'}, to = 'Standing' },
       },
     })
 
@@ -150,7 +151,7 @@ function Hero:onRunning(event, from, to)
   end
 end
 
-function Hero:onReeling(event, from, to)
+function Hero:onenterReeling(event, from, to)
   if (self.vx >= 0) then
     self.curr_anim = self.anim.reeling.left
   else
@@ -158,20 +159,19 @@ function Hero:onReeling(event, from, to)
   end
 end
 
-    --if (love.timer.getTime() - self.stunTimestamp) > 2 then
-    --  self.anim.stunned.left:reset()
-    --  self.anim.stunned.left:play()
-    --  self.anim.stunned.right:reset()
-    --  self.anim.stunned.right:play()
-    --  self.state = "running"
-    --else
-    --  if self.vx <= 0 then
-    --    self.anim.stunned.right:update(dt)
-    --  elseif self.vx > 0 then
-    --    self.anim.stunned.left:update(dt)
-    --  end
-    --end
+function Hero:onleaveReeling(event, from, to)
+  for k, e in pairs(self.curr_anim) do
+    anim = e[1]
+    anim:reset()
+    anim:play()
+  end
+end
 
+function Hero:onHurt(event, from, to)
+  self.stunTimestamp = love.timer.getTime()
+  self:setAccel(0, 0)
+  love.audio.play(Hero.sounds.thud)
+end
 
 function Hero:draw_bounding_box()
   love.graphics.setColor(255, 255, 255, 100)
@@ -221,7 +221,7 @@ function Hero:think(dt)
     if love.keyboard.isDown("q") then
       self:stun(dt)
     end
-  elseif self.self.current == "Reeling" then
+  elseif self.fsm.current == "Reeling" then
     -- do nothing
   end
 end
@@ -233,6 +233,13 @@ function Hero:move(dt)
     anim = e[1]
     anim:update(dt)
   end
+
+  -- timers to trigger states
+  if (love.timer.getTime() - self.stunTimestamp) > 2 then
+    self.fsm:Recover()
+  end
+
+
 end
 
 -- hero specific actions
@@ -292,11 +299,8 @@ function Hero:shoot(dt)
   love.audio.play(Hero.sounds.throw)
 end
 
-function Hero:stun(dt)
-  self.state = "stunned"
-  self.stunTimestamp = love.timer.getTime()
-  self:setAccel(0, 0)
-  love.audio.play(Hero.sounds.thud)
+function Hero:hurt(dt)
+  self.fsm:Hurt()
 end
 
 -- draggable

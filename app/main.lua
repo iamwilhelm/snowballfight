@@ -54,9 +54,9 @@ function love.update(dt)
   world:each_projectile(function(bullet, i)
     world:each_actor(function(actor, j)
       if bullet:isLethalTo(actor) and physics.isCollide(bullet, actor) then
-        bullet:hitTarget()
-        actor:stun()
         physics.transferMomentum(bullet, actor, 1)
+        bullet:hitTarget()
+        actor:hurt()
       end
     end)
   end)
