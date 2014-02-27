@@ -271,24 +271,18 @@ function Hero:think(dt)
   if self.fsm.current == "Standing" or self.fsm.current == "Running" then
     if love.keyboard.isDown("a") then
       self:moveLeft(dt)
-      self.fsm:Run()
     elseif love.keyboard.isDown("d") then
       self:moveRight(dt)
-      self.fsm:Run()
     else
       self:stopHorizontal(dt)
-      self.fsm:Stop()
     end
 
     if love.keyboard.isDown("w") then
       self:moveUp(dt)
-      self.fsm:Run()
     elseif love.keyboard.isDown("s") then
       self:moveDown(dt)
-      self.fsm:Run()
     else
       self:stopVertical(dt)
-      self.fsm:Stop()
     end
 
     if love.keyboard.isDown("q") then
@@ -328,26 +322,32 @@ end
 
 function Hero:moveLeft(dt)
   self.ax = -self.moveForce / self.mass
+  self.fsm:Run()
 end
 
 function Hero:moveRight(dt)
   self.ax = self.moveForce / self.mass
+  self.fsm:Run()
 end
 
 function Hero:moveUp(dt)
   self.ay = -self.moveForce / self.mass
+  self.fsm:Run()
 end
 
 function Hero:moveDown(dt)
   self.ay = self.moveForce / self.mass
+  self.fsm:Run()
 end
 
 function Hero:stopHorizontal(dt)
   self.ax = 0
+  self.fsm:Stop()
 end
 
 function Hero:stopVertical(dt)
   self.ay = 0
+  self.fsm:Stop()
 end
 
 function Hero:windupThrow(dt)
