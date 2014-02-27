@@ -28,6 +28,10 @@ function Hero.loadAssets()
   Hero.images.runningTorsoRight = love.graphics.newImage("assets/sprites/sballer/sballerTrunRight.png")
   Hero.images.runningLegsRight = love.graphics.newImage("assets/sprites/sballer/sballerLrunRight.png")
 
+  Hero.images.standingHead = love.graphics.newImage("assets/sprites/sballer/sballerHstanding.png")
+  Hero.images.standingTorso = love.graphics.newImage("assets/sprites/sballer/sballerTstanding.png")
+  Hero.images.standingLegs = love.graphics.newImage("assets/sprites/sballer/sballerLstanding.png")
+
   Hero.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
   Hero.images.stunRight = love.graphics.newImage("assets/sprites/sballer/sballerLstunRight.png")
 end
@@ -51,28 +55,29 @@ function Hero:init(x, y)
     self.anim = {}
 
     self.anim.standing = {
-      left = {
-        head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
-        torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
-        legs = { newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0), 38, 30, 8, -12 - 4 },
+      all = {
+        legs = { newAnimation(Hero.images.standingLegs, 31, 21, 0.1, 0), 31, 21, 0, -20 },
+        torso = { newAnimation(Hero.images.standingTorso, 36, 31, 0.1, 0), 34, 33, 0, -4 },
+        head = { newAnimation(Hero.images.standingHead, 35, 28, 0.1, 0), 31, 30, 0, 20 - 8 },
       },
-      right = {
-        head = { newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0), 31, 30, 0, 20 - 3 },
-        torso = { newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0), 34, 33, 0, -4 },
-        legs = { newAnimation(Hero.images.runningLegsRight, 38, 30, 0.1, 0), 38, 30, -8, -12 - 4},
-      }
     }
+    -- self.anim.standing.left.head[1]:seek(4)
+    -- self.anim.standing.left.torso[1]:seek(4)
+    -- self.anim.standing.left.legs[1]:seek(4)
+    self.anim.standing.all.head[1]:seek(6)
+    self.anim.standing.all.torso[1]:seek(6)
+    self.anim.standing.all.legs[1]:seek(6)
 
     self.anim.running = {
       left = {
-        head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
-        torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
         legs = { newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0), 38, 30, 8, -12 - 4 },
+        torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
       },
       right = {
-        head = { newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0), 31, 30, 0, 20 - 3 },
-        torso = { newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0), 34, 33, 0, -4 },
         legs = { newAnimation(Hero.images.runningLegsRight, 38, 30, 0.1, 0), 38, 30, -8, -12 - 4},
+        torso = { newAnimation(Hero.images.runningTorsoRight, 34, 33, 0.1, 0), 34, 33, 0, -4 },
+        head = { newAnimation(Hero.images.runningHeadRight, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
       }
     }
 
@@ -98,11 +103,9 @@ function Hero:init(x, y)
     self.anim.reeling.right.all[1]:setMode('once')
 
     self.anim.utils = {
-      reset = function(curr_anim)
+      each_anim = function(curr_anim, callback)
         for k, e in pairs(curr_anim) do
-          anim = e[1]
-          anim:reset()
-          anim:play()
+          callback(k, e[1])
         end
       end
     }
@@ -163,10 +166,25 @@ end
 -- callbacks for FSM states
 
 function Hero:onStanding(event, from, to)
+  self.curr_anim = self.anim.standing.all
   if (self.vx <= 0) then
-    self.curr_anim = self.anim.standing.left
+    self.anim.utils.each_anim(self.curr_anim, function(key, anim)
+      anim:stop()
+      if key == 'head' then
+        anim:seek(8)
+      else
+        anim:seek(4)
+      end
+    end)
   else
-    self.curr_anim = self.anim.standing.right
+    self.anim.utils.each_anim(self.curr_anim, function(key, anim)
+      anim:stop()
+      if key == 'head' then
+        anim:seek(12)
+      else
+        anim:seek(6)
+      end
+    end)
   end
 end
 
@@ -187,7 +205,10 @@ function Hero:onenterReeling(event, from, to)
 end
 
 function Hero:onleaveReeling(event, from, to)
-  self.anim.utils.reset(self.curr_anim)
+  self.anim.utils.each_anim(self.curr_anim, function(key, anim)
+    anim:reset()
+    anim:play()
+  end)
 end
 
 function Hero:onWinduping(event, from, to)
@@ -199,7 +220,10 @@ function Hero:onWinduping(event, from, to)
 end
 
 function Hero:onleaveWinduping(event, from, to)
-  self.anim.utils.reset(self.curr_anim)
+  self.anim.utils.each_anim(self.curr_anim, function(key, anim)
+    anim:reset()
+    anim:play()
+  end)
 end
 
 function Hero:onThrowing(event, from, to)
@@ -211,7 +235,10 @@ function Hero:onThrowing(event, from, to)
 end
 
 function Hero:onleaveThrowing(event, from, to)
-  self.anim.utils.reset(self.curr_anim)
+  self.anim.utils.each_anim(self.curr_anim, function(key, anim)
+    anim:reset()
+    anim:play()
+  end)
 end
 
 -- callbacks for FSM events
@@ -301,6 +328,13 @@ function Hero:move(dt)
     anim:update(dt)
   end
 
+  -- direction of velocity to trigger running state
+  if math.abs(self.vx) + math.abs(self.vy) >= 5 then
+    self.fsm:Run()
+  else
+    self.fsm:Stop()
+  end
+
   -- timers to trigger states
   if (love.timer.getTime() - self.reelingTimestamp) > 2 then
     self.fsm:Recover()
@@ -322,32 +356,26 @@ end
 
 function Hero:moveLeft(dt)
   self.ax = -self.moveForce / self.mass
-  self.fsm:Run()
 end
 
 function Hero:moveRight(dt)
   self.ax = self.moveForce / self.mass
-  self.fsm:Run()
 end
 
 function Hero:moveUp(dt)
   self.ay = -self.moveForce / self.mass
-  self.fsm:Run()
 end
 
 function Hero:moveDown(dt)
   self.ay = self.moveForce / self.mass
-  self.fsm:Run()
 end
 
 function Hero:stopHorizontal(dt)
   self.ax = 0
-  self.fsm:Stop()
 end
 
 function Hero:stopVertical(dt)
   self.ay = 0
-  self.fsm:Stop()
 end
 
 function Hero:windupThrow(dt)
