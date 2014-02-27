@@ -366,15 +366,11 @@ function Hero:releaseThrow(dt)
   local dy = eyesight.y - self.y
   local rot = math.atan2(dy, dx)
 
-  local elapsed = love.timer.getTime() - self.windupTimestamp
-  print(elapsed)
-  local force = 12000 * self:windupForce(elapsed)
-
+  -- TODO global access
   local bullet = Bullet:new(self, self.x, self.y, rot)
+  local force = 12000 * self:windupForce(love.timer.getTime() - self.windupTimestamp)
   bullet:setMoveForce(force)
   bullet:impulse(dt)
-
-  -- TODO global access
   world:add(bullet)
 
   self.fsm:ReleaseThrow()
