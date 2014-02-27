@@ -151,11 +151,11 @@ function love.keyreleased(key)
 end
 
 function love.mousepressed(x, y, button)
-  hero:charge(dt)
+  hero:windupThrow(dt)
 end
 
 function love.mousereleased(x, y, button)
-  hero:shoot(dt)
+  hero:releaseThrow(dt)
 end
 
 function love.quit()

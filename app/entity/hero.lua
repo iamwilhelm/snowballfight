@@ -15,17 +15,21 @@ function Hero.loadAssets()
   Hero.sounds.thud = love.audio.newSource("assets/sounds/punch.mp3")
 
   Hero.images = {}
-  Hero.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
-  Hero.images.stunRight = love.graphics.newImage("assets/sprites/sballer/sballerLstunRight.png")
   Hero.images.throwLeft = love.graphics.newImage("assets/sprites/sballer/sballerLthrowLeft.png")
   Hero.images.throwRight = love.graphics.newImage("assets/sprites/sballer/sballerLthrowRight.png")
+  Hero.images.windupLeft = love.graphics.newImage("assets/sprites/sballer/sballerLwindupLeft.png")
+  Hero.images.windupRight = love.graphics.newImage("assets/sprites/sballer/sballerLwindupRight.png")
 
   Hero.images.runningHeadLeft = love.graphics.newImage("assets/sprites/sballer/sballerHrunLeft.png")
-  Hero.images.runningHeadRight = love.graphics.newImage("assets/sprites/sballer/sballerHrunRight.png")
   Hero.images.runningTorsoLeft = love.graphics.newImage("assets/sprites/sballer/sballerTrunLeft.png")
-  Hero.images.runningTorsoRight = love.graphics.newImage("assets/sprites/sballer/sballerTrunRight.png")
   Hero.images.runningLegsLeft = love.graphics.newImage("assets/sprites/sballer/sballerLrunLeft.png")
+
+  Hero.images.runningHeadRight = love.graphics.newImage("assets/sprites/sballer/sballerHrunRight.png")
+  Hero.images.runningTorsoRight = love.graphics.newImage("assets/sprites/sballer/sballerTrunRight.png")
   Hero.images.runningLegsRight = love.graphics.newImage("assets/sprites/sballer/sballerLrunRight.png")
+
+  Hero.images.stunLeft = love.graphics.newImage("assets/sprites/sballer/sballerLstunLeft.png")
+  Hero.images.stunRight = love.graphics.newImage("assets/sprites/sballer/sballerLstunRight.png")
 end
 
 function Hero:init(x, y)
@@ -37,57 +41,12 @@ function Hero:init(x, y)
     self:setMoveForce(5000)
     self:setMass(10)
 
-    self.stunTimestamp = love.timer.getTime()
-    self.chargeTimestamp = love.timer.getTime()
-
-    -- All the possible states and descriptions
-    --
-    -- standing: not moving with nothing in hands
-    -- holding: not moving with something in hands
-    -- crouching: not moving and stooped low (making a snowball)
-    -- catching: not moving with hands outstretched to catch
-    --
-    -- running: moving around without anything in hands
-    -- carrying: moving around with something in hands
-    --
-    -- winding_up: cocking arm in preparation to throw
-    -- throwing: throwing snowball
-    --
-    -- reeling: got hit by a snowball
-    --
-    -- idleing: not moving, but keeping oneself busy
-    --
-    self.fsm = statemachine.create({
-      metatable = self,
-      initial = 'Standing',
-      events = {
-        { name = 'Run', from = 'Standing', to = 'Running' },
-        { name = 'Stop', from = 'Running', to = 'Standing' },
-
-        { name = 'Run', from = 'Holding', to = 'Carrying' },
-        { name = 'Stop', from = 'Carrying', to = 'Holding' },
-
-        -- cannot crouch if holding/carrying something
-        { name = 'Crouch', from = {'Standing', 'Running'}, to = 'Crouching' },
-        { name = 'Stand', from = 'Crouch', to = 'Holding' }, -- timeout activated
-
-        { name = 'Outstretch_arms', from = {'Standing', 'Running'}, to = 'Catching' },
-        { name = 'Tuck_arms', from = 'Catching', to = 'Holding' }, -- timeout activated
-
-        { name = 'Windup_throw', from = 'Holding', to ='Winduping' },
-        { name = 'Release_throw', from = 'Winduping', to = 'Throwing' },
-        { name = 'Recover_throw', from = 'Throwing', to = 'Standing' },
-
-        { name = 'Hurt',
-          from = {'Standing', 'Running', 'Catching', 'Crouching', 'Holding', 'Winduping'},
-          to = 'Reeling' },
-        { name = 'Recover', from = 'Reeling', to = 'Standing' },
-
-        { name = 'Block', from = {'Holding', 'Carrying'}, to = 'Standing' },
-      },
-    })
+    self.reelingTimestamp = love.timer.getTime()
+    self.windupTimestamp = love.timer.getTime()
+    self.throwingTimestamp = love.timer.getTime()
 
     -- set animations for each state
+    -- { animation, width, height, offsetX, offsetY }
 
     self.anim = {}
 
@@ -106,7 +65,6 @@ function Hero:init(x, y)
 
     self.anim.running = {
       left = {
-        -- { animation, width, height, offsetX, offsetY }
         head = { newAnimation(Hero.images.runningHeadLeft, 31, 30, 0.1, 0), 31, 30, 0, 20 - 4 },
         torso = { newAnimation(Hero.images.runningTorsoLeft, 34, 33, 0.1, 0), 34, 33, 0, -4 },
         legs = { newAnimation(Hero.images.runningLegsLeft, 38, 30, 0.1, 0), 38, 30, 8, -12 - 4 },
@@ -118,12 +76,20 @@ function Hero:init(x, y)
       }
     }
 
-    self.anim.throwing = {
-      left = { all = { newAnimation(Hero.images.throwLeft, 75, 68, 0.1, 0), 58, 69, 0, 0 } },
-      right = { all = { newAnimation(Hero.images.throwRight, 75, 68, 0.1, 0), 58, 69, 0, 0 } }
+    self.anim.winduping = {
+      left = { all = { newAnimation(Hero.images.windupLeft, 75, 68, 0.1, 0), 58, 69, 0, 0 } },
+      right = { all = { newAnimation(Hero.images.windupRight, 75, 68, 0.1, 0), 58, 69, 0, 0 } },
     }
+    self.anim.winduping.left.all[1]:setMode('once')
+    self.anim.winduping.right.all[1]:setMode('once')
 
-    -- 58 / 2, 69 / 2)
+    self.anim.throwing = {
+      left = { all = { newAnimation(Hero.images.throwLeft, 75, 68, 0.075, 0), 58, 69, 0, 0 } },
+      right = { all = { newAnimation(Hero.images.throwRight, 75, 68, 0.075, 0), 58, 69, 0, 0 } }
+    }
+    self.anim.throwing.left.all[1]:setMode('once')
+    self.anim.throwing.right.all[1]:setMode('once')
+
     self.anim.reeling = {
       left = { all = { newAnimation(Hero.images.stunLeft, 58, 69, 0.175, 0), 58, 69, 0, 0 } },
       right = { all = { newAnimation(Hero.images.stunRight, 58, 69, 0.175, 0), 58, 69, 0, 0 } },
@@ -131,9 +97,70 @@ function Hero:init(x, y)
     self.anim.reeling.left.all[1]:setMode('once')
     self.anim.reeling.right.all[1]:setMode('once')
 
+    self.anim.utils = {
+      reset = function(curr_anim)
+        for k, e in pairs(curr_anim) do
+          anim = e[1]
+          anim:reset()
+          anim:play()
+        end
+      end
+    }
+
     self.curr_anim = self.anim.running.left
+
+
+    -- All the possible states and descriptions
+    --
+    -- standing: not moving with nothing in hands
+    -- holding: not moving with something in hands
+    -- crouching: not moving and stooped low (making a snowball)
+    -- catching: not moving with hands outstretched to catch
+    --
+    -- running: moving around without anything in hands
+    -- carrying: moving around with something in hands
+    --
+    -- winduping: cocking arm in preparation to throw
+    -- throwing: throwing snowball
+    --
+    -- reeling: got hit by a snowball
+    --
+    -- idleing: not moving, but keeping oneself busy
+    --
+    self.fsm = statemachine.create({
+      metatable = self,
+      initial = 'Standing',
+      events = {
+        { name = 'Run', from = 'Standing', to = 'Running' },
+        { name = 'Stop', from = 'Running', to = 'Standing' },
+
+        { name = 'Run', from = 'Holding', to = 'Carrying' },
+        { name = 'Stop', from = 'Carrying', to = 'Holding' },
+
+        -- cannot crouch if holding/carrying something
+        { name = 'Crouch', from = {'Standing', 'Running'}, to = 'Crouching' },
+        { name = 'Stand', from = 'Crouching', to = 'Holding' }, -- timeout activated
+
+        { name = 'OutstretchArms', from = {'Standing', 'Running'}, to = 'Catching' },
+        { name = 'TuckArms', from = 'Catching', to = 'Holding' }, -- timeout activated
+
+        { name = 'WindupThrow', from = 'Holding', to ='Winduping' },
+        { name = 'ReleaseThrow', from = 'Winduping', to = 'Throwing' },
+        { name = 'RecoverThrow', from = 'Throwing', to = 'Standing' },
+
+        { name = 'Hurt',
+          from = {'Standing', 'Running', 'Catching', 'Crouching', 'Holding', 'Winduping', 'Throwing' },
+          to = 'Reeling' },
+        { name = 'Recover', from = 'Reeling', to = 'Standing' },
+
+        { name = 'Block', from = {'Holding', 'Carrying'}, to = 'Standing' },
+      },
+    })
+
   end
 end
+
+-- callbacks for FSM states
 
 function Hero:onStanding(event, from, to)
   if (self.vx <= 0) then
@@ -160,18 +187,64 @@ function Hero:onenterReeling(event, from, to)
 end
 
 function Hero:onleaveReeling(event, from, to)
-  for k, e in pairs(self.curr_anim) do
-    anim = e[1]
-    anim:reset()
-    anim:play()
+  self.anim.utils.reset(self.curr_anim)
+end
+
+function Hero:onWinduping(event, from, to)
+  if (self.vx <= 0) then
+    self.curr_anim = self.anim.winduping.left
+  else
+    self.curr_anim = self.anim.winduping.right
   end
 end
 
+function Hero:onleaveWinduping(event, from, to)
+  self.anim.utils.reset(self.curr_anim)
+end
+
+function Hero:onThrowing(event, from, to)
+  if (self.vx <= 0) then
+    self.curr_anim = self.anim.throwing.left
+  else
+    self.curr_anim = self.anim.throwing.right
+  end
+end
+
+function Hero:onleaveThrowing(event, from, to)
+  self.anim.utils.reset(self.curr_anim)
+end
+
+-- callbacks for FSM events
+
+function Hero:onWindupThrow(event, from, to)
+  print("event: windup throw -- set windup timestamp")
+  self.windupTimestamp = love.timer.getTime()
+  self:setAccel(0, 0)
+end
+
+function Hero:onReleaseThrow(event, from, to)
+  print("event: release throw")
+  if (self.vx <= 0) then
+    self.curr_anim = self.anim.throwing.left
+  else
+    self.curr_anim = self.anim.throwing.right
+  end
+  self.throwingTimestamp = love.timer.getTime()
+  love.audio.play(Hero.sounds.throw)
+end
+
+function Hero:onRecoverThrow(event, from, to)
+  print("event: recover throw")
+end
+
 function Hero:onHurt(event, from, to)
-  self.stunTimestamp = love.timer.getTime()
+  self.reelingTimestamp = love.timer.getTime()
   self:setAccel(0, 0)
   love.audio.play(Hero.sounds.thud)
 end
+
+
+-- drawing methods
 
 function Hero:draw_bounding_box()
   love.graphics.setColor(255, 255, 255, 100)
@@ -235,14 +308,23 @@ function Hero:move(dt)
   end
 
   -- timers to trigger states
-  if (love.timer.getTime() - self.stunTimestamp) > 2 then
+  if (love.timer.getTime() - self.reelingTimestamp) > 2 then
     self.fsm:Recover()
   end
 
-
+  if (love.timer.getTime() - self.throwingTimestamp) > 1 then
+    self.fsm:RecoverThrow()
+  end
 end
 
 -- hero specific actions
+
+function Hero:windupForce(elapsed)
+  local u = 0.3
+  local sigma = 0.25
+  return 1 / (sigma * math.sqrt(2 * math.pi)) *
+    math.exp(-math.pow(elapsed - u, 2) / (2 * math.pow(sigma, 2)))
+end
 
 function Hero:moveLeft(dt)
   self.ax = -self.moveForce / self.mass
@@ -268,25 +350,25 @@ function Hero:stopVertical(dt)
   self.ay = 0
 end
 
-function Hero:charge(dt)
-  self.chargeTimestamp = love.timer.getTime()
+function Hero:windupThrow(dt)
+  print(self.fsm.current)
+  self.fsm:Crouch()
+  print(self.fsm.current)
+  self.fsm:Stand()
+  print(self.fsm.current)
+  self.fsm:WindupThrow()
+  print(self.fsm.current)
 end
 
-function Hero:chargedForce(elapsed)
-  local u = 0.3
-  local sigma = 0.25
-  return 1 / (sigma * math.sqrt(2 * math.pi)) *
-    math.exp(-math.pow(elapsed - u, 2) / (2 * math.pow(sigma, 2)))
-end
-
-function Hero:shoot(dt)
+function Hero:releaseThrow(dt)
   dt = dt or love.timer.getDelta()
   local dx = eyesight.x - self.x
   local dy = eyesight.y - self.y
   local rot = math.atan2(dy, dx)
 
-  local elapsed = love.timer.getTime() - self.chargeTimestamp
-  local force = 12000 * self:chargedForce(elapsed)
+  local elapsed = love.timer.getTime() - self.windupTimestamp
+  print(elapsed)
+  local force = 12000 * self:windupForce(elapsed)
 
   local bullet = Bullet:new(self, self.x, self.y, rot)
   bullet:setMoveForce(force)
@@ -295,8 +377,7 @@ function Hero:shoot(dt)
   -- TODO global access
   world:add(bullet)
 
-  -- play sound (should be in a before filter or state change callback)
-  love.audio.play(Hero.sounds.throw)
+  self.fsm:ReleaseThrow()
 end
 
 function Hero:hurt(dt)
