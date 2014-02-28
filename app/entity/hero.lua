@@ -164,10 +164,11 @@ function Hero:init(x, y)
 end
 
 -- callbacks for FSM states
+-- TODO all use of eyesight is global access
 
 function Hero:onStanding(event, from, to)
   self.curr_anim = self.anim.standing.all
-  if (self.vx <= 0) then
+  if (eyesight.x <= self.x) then
     self.anim.utils.each_anim(self.curr_anim, function(key, anim)
       anim:stop()
       if key == 'head' then
@@ -189,7 +190,7 @@ function Hero:onStanding(event, from, to)
 end
 
 function Hero:onRunning(event, from, to)
-  if (self.vx <= 0) then
+  if (eyesight.x <= self.x) then
     self.curr_anim = self.anim.running.left
   else
     self.curr_anim = self.anim.running.right
@@ -212,7 +213,7 @@ function Hero:onleaveReeling(event, from, to)
 end
 
 function Hero:onWinduping(event, from, to)
-  if (self.vx <= 0) then
+  if (eyesight.x <= self.x) then
     self.curr_anim = self.anim.winduping.left
   else
     self.curr_anim = self.anim.winduping.right
@@ -227,7 +228,7 @@ function Hero:onleaveWinduping(event, from, to)
 end
 
 function Hero:onThrowing(event, from, to)
-  if (self.vx <= 0) then
+  if (eyesight.x <= self.x) then
     self.curr_anim = self.anim.throwing.left
   else
     self.curr_anim = self.anim.throwing.right
